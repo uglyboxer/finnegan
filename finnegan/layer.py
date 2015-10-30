@@ -3,6 +3,7 @@
 A layer constructor class designed for use in the Finnegan Network model
 
 """
+import numpy as np
 
 from finnegan.neuron import Neuron
 
@@ -25,8 +26,17 @@ class Layer():
             ("neuron": instance of Neuron obj,
              "forward": list of forward connections (strings),
              "backward": list of backward connections (strings))
+    error_matrix : list
+        The collection of floats that represent the error per neuron in the
+        layer.
+    mr_input : list
+        The most recent input vector to pass through #haxor alert
     mr_output : list
         An ordered list of the most recent output of the layer
+    l_rate : float
+        A constant determining the the learning rate of the network
+        Bigger learns faster - risks creating oscilations
+        Smaller is slower - risks settling in local minimums
 
     """
 
@@ -35,29 +45,40 @@ class Layer():
         self.neurons = [{"neuron": Neuron(incoming_tot),
                          "forward": set(),
                          "backward": set()} for x in range(num_neurons)]
+        self.error_matrix = []
+        self.mr_input = []
         self.mr_output = []
+        self.l_rate = .1
 
-    def _layer_level_backprop(error, hidden=True):
+    def _layer_level_backprop(self, layer_ahead, hidden=True):
         """ Calculates the error at this level
 
         Parameters
         ----------
-        error : float
-            The error from the layer above (or from the output in last layer)
         hidden : bool
             Whether or not the current layer is hidden (default: True)
 
         """
-        
+        if not hidden:
+            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i])
+                                 for i, neuron in enumerate(self.neurons)]
+            for neuron in self.neurons:
+                neuron.weights = [weight + np.multipy(self.mr_input, 
+                                                      (self.l_rate * 
+                                                      self.error_matrix[j]))
+                                  for j, weight in enumerate(neuron.weights)]
 
+        else:
+            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i])
+                                 * np.dot(layer_ahead.error_matrix,
+                                 layer_ahead.neurons[i].weight)
+                                 for i, neuron in enumerate(self.neurons)]
 
-        error_matrix = [out[i] * (1 - out[i]) 
-                               * np.dot(erro_matrix[n+1], n+1_neuron_weight[i])
-                                for i, neuron in enumerate(neurons)]
-
-        [[weight += np.multipy(input_vector, l_rate * error_matrix[j]) 
-                    for j, weight in enumerate(neuron.weights)] 
-                    for neuron in self.neurons]
+            for neuron in self.neurons:
+                neuron.weights = [weight + np.multipy(self.mr_input, 
+                                                      (self.l_rate * 
+                                                      self.error_matrix[j]))
+                                  for j, weight in enumerate(neuron.weights)]
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -74,6 +95,7 @@ class Layer():
 
         """
         output = []
+        self.mr_input = vector
         for neur_inst in self.neurons:
             output.append(neur_inst["neuron"].fires[vector][1])
         self.mr_output = output[:]

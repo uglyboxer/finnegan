@@ -8,7 +8,6 @@ Recurrent Neural Networks via extensive visualizations.
 import sys
 
 import numpy as np
-from operator import add
 
 from finnnegan.layer import Layer
 
@@ -90,6 +89,16 @@ class Network:
     def _backprop(self, guess_vector, target_vector):
         """ Takes the output of the net and initiates the backpropogation
 
+        In output layer:
+          generate error matrix [(out * (1-out) * (Target-out)) for each neuron]
+          update weights matrix [[+= l_rate * error_entry * input TO that
+          amount] for each neuron ]
+
+        In hidden layer
+          generate error matrix [out * (1-out) * dotproduct(entry in n+1 error
+          matrix, n+1 weight of that entry)] update weights matrix [[+= l_rate
+          for each weight] for each neuron]
+
         Parameters
         ----------
         vector : numpy array
@@ -99,7 +108,6 @@ class Network:
 
         Attributes
         ----------
-        error_matrix : numpy array
 
 
         Returns
@@ -108,27 +116,21 @@ class Network:
             As evidence of execution
 
         """
-        alt_matrix = np.multiply(guess_vector, -1)
-        error_matrix = np.fromiter(map(add, target_vector, alt_matrix, np.float))
-        self.layers[-1]._layer_level_backprop(error_matrix)
+        for i, layer in enumerate(reversed(self.layers)):
+            if i == 0:
+                hidden = False
+                layer_ahead = None
+            else:
+                hidden = True
+                # -1 because layers was reversed for index
+                layer_ahead = self.layers[i-1]
 
-        """
-        for each neuron in output layer:
-            error = outα (1 - outα) (Targetα - outα) 
-        for each weight IN EACH NEURON in that layer:
-            w += l_rate * error * input amout to that weight for n-1 layer
+            if layer._layer_level_backprop(layer_ahead, hidden):
+                continue
+            else:
+                print("Backprop failed on layer: " + str(i))
+        return True
 
-        for each neuron in the layer before:
-            error = outA (1 – outA) sum (errorout * weightout) for all nextlayer 
-                                        neurons - which is a dot product of the 
-                                        two matrices
-        for each weight IN EACH NEURON in that layer:
-            w += l_rate * error * input amout to that weight for n-1 layer    
-
-
-
-        ErrorA = Output A (1 - Output A)(ErrorB WAB + ErrorC WAC) 
-        """
     def train(self, dataset, epochs):
         """ Runs the training dataset through the network a given number of
         times.

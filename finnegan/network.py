@@ -7,6 +7,9 @@ Recurrent Neural Networks via extensive visualizations.
 """
 import sys
 
+import numpy as np
+from operator import add
+
 from finnnegan.layer import Layer
 
 
@@ -27,6 +30,7 @@ class Network:
         self.num_layers = layers
         self.neuron_count = neuron_count
         self.dataset = dataset
+        self.possible = [x for x in range(10)]
         self.layers = [Layer(self.neuron_count[x], self.neuron_count[x-1])
                        for x in self.num_layers]
 
@@ -51,13 +55,52 @@ class Network:
             if x > len(self.layers):
                 return vector
 
-    def _backprop(self, vector):
+    def _softmax(w, t=1.0):
+        """Author: Jeremy M. Stober, edits by Martin Thoma
+        Program: softmax.py
+        Date: Wednesday, February 29 2012 and July 31 2014
+        Description: Simple softmax function.
+        Calculate the softmax of a list of numbers w.
+
+        Parameters
+        ----------
+        w : list of numbers
+        t : float
+
+        Return
+        ------
+        a list of the same length as w of non-negative numbers
+
+        Examples
+        --------
+        >>> softmax([0.1, 0.2])
+        array([ 0.47502081,  0.52497919])
+        >>> softmax([-0.1, 0.2])
+        array([ 0.42555748,  0.57444252])
+        >>> softmax([0.9, -10])
+        array([  9.99981542e-01,   1.84578933e-05])
+        >>> softmax([0, 10])
+        array([  4.53978687e-05,   9.99954602e-01])
+
+        """
+        e = np.exp(np.array(w) / t)
+        dist = e / np.sum(e)
+        return dist
+
+    def _backprop(self, guess_vector, target_vector):
         """ Takes the output of the net and initiates the backpropogation
 
         Parameters
         ----------
         vector : numpy array
             The output from the last layer during a training pass
+        target : list
+            List of expected values
+
+        Attributes
+        ----------
+        error_matrix : numpy array
+
 
         Returns
         -------
@@ -65,8 +108,27 @@ class Network:
             As evidence of execution
 
         """
-        pass
+        alt_matrix = np.multiply(guess_vector, -1)
+        error_matrix = np.fromiter(map(add, target_vector, alt_matrix, np.float))
+        self.layers[-1]._layer_level_backprop(error_matrix)
 
+        """
+        for each neuron in output layer:
+            error = outα (1 - outα) (Targetα - outα) 
+        for each weight IN EACH NEURON in that layer:
+            w += l_rate * error * input amout to that weight for n-1 layer
+
+        for each neuron in the layer before:
+            error = outA (1 – outA) sum (errorout * weightout) for all nextlayer 
+                                        neurons - which is a dot product of the 
+                                        two matrices
+        for each weight IN EACH NEURON in that layer:
+            w += l_rate * error * input amout to that weight for n-1 layer    
+
+
+
+        ErrorA = Output A (1 - Output A)(ErrorB WAB + ErrorC WAC) 
+        """
     def train(self, dataset, epochs):
         """ Runs the training dataset through the network a given number of
         times.
@@ -79,9 +141,16 @@ class Network:
 
         """
         for x in epochs:
-            for vector in dataset:
+            for vector, target in dataset:
+                target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
-                self._backprop(y)
+                z = self._softmax(y)
+                self._backprop(z, target_vector)
+
+        # Add in test loop
+        # Add in report guesses
+
+        # Check for better sigmoid function
 
 
 if __name__ == '__main__':

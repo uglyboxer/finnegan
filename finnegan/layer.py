@@ -71,16 +71,12 @@ class Layer():
             self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
                                  (target_vector[i] - self.mr_output[i])
                                  for i, neuron in enumerate(self.neurons)]
-            print(self.mr_output, "output")
-            print(self.error_matrix)
-            print(target_vector)
             for i, neuron in enumerate(self.neurons):
                 neuron["neuron"].weights = [weight + (self.mr_input[j]* 
                                                       (self.l_rate * 
                                                       self.error_matrix[i]))
                                           for j, weight in
                                           enumerate(neuron["neuron"].weights)]
-            print(self.neurons[1]["neuron"].weights)
         else:
 
             for i, neuron in enumerate(self.neurons):
@@ -91,19 +87,13 @@ class Layer():
                 self.error_matrix.append(self.mr_output[i] *
                                          (1 - self.mr_output[i]) * temp_err)
 
-
-
             for i, neuron in enumerate(self.neurons):
                 neuron["neuron"].weights = [weight + (self.mr_input[j] *
                                                       (self.l_rate *
                                                       self.error_matrix[i]))
                                             for j, weight in
                                             enumerate(neuron["neuron"].weights)]
-
-        if math.isnan(self.error_matrix[0]):
-            print("help, please")
-        else:
-            return True
+        return True
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -125,7 +115,6 @@ class Layer():
         for neur_inst in self.neurons:
             output.append(neur_inst["neuron"].fires(v_with_bias)[1])
         self.mr_output = output[:]
-        print(output)
         return output
 
 

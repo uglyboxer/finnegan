@@ -25,8 +25,8 @@ class Neuron:
 
     Parameters
     ----------
-    vector_size : tuple
-        A tuple of ints defining the dimensions of an input vector (array)
+    vector_size : int
+        An integer defining the dimensions of an input vector (array)
 
     Attributes
     ----------
@@ -43,8 +43,8 @@ class Neuron:
     def __init__(self, vector_size):
 
         self.threshold = .5
-        self.weights = np.random.random(vector_size).flatten()
-
+        self.weights = (np.random.random(vector_size).flatten())
+        # self.weights = np.zeros(vector_size).flatten()
 
     def _sigmoid(self, z):
         """ Calculates the output of a logistic function
@@ -100,7 +100,6 @@ class Neuron:
         self.weights = np.fromiter(map(add, self.weights, corr_matrix), np.float)
         return True
 
-
     def fires(self, vector):
         """ Takes an input vector and decides if neuron fires or not
 
@@ -117,9 +116,9 @@ class Neuron:
             The dot product of the vector and weights
         """
 
-        dp = np.dot(vector, self.weights)
-        if expit(dp) > self.threshold:
-
+        w_with_bias = np.append(self.weights, 1)
+        dp = np.dot(vector, w_with_bias)
+        if self._sigmoid(dp) > self.threshold:
             return True, dp
         else:
             return False, dp

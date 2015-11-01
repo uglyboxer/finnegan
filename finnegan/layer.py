@@ -4,8 +4,10 @@ A layer constructor class designed for use in the Finnegan Network model
 
 """
 import numpy as np
+import math
+# import ipdb
 
-from finnegan.neuron import Neuron
+from neuron import Neuron
 
 
 class Layer():
@@ -48,9 +50,9 @@ class Layer():
         self.error_matrix = []
         self.mr_input = []
         self.mr_output = []
-        self.l_rate = .1
+        self.l_rate = .05
 
-    def _layer_level_backprop(self, layer_ahead, hidden=True):
+    def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level
 
         Parameters
@@ -58,27 +60,50 @@ class Layer():
         hidden : bool
             Whether or not the current layer is hidden (default: True)
 
+        Returns
+        -------
+        True
+            For acknoledgment of execution
+
         """
         if not hidden:
-            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i])
+            self.mr_output = output
+            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
+                                 (target_vector[i] - self.mr_output[i])
                                  for i, neuron in enumerate(self.neurons)]
-            for neuron in self.neurons:
-                neuron.weights = [weight + np.multipy(self.mr_input, 
+            print(self.mr_output, "output")
+            print(self.error_matrix)
+            print(target_vector)
+            for i, neuron in enumerate(self.neurons):
+                neuron["neuron"].weights = [weight + (self.mr_input[j]* 
                                                       (self.l_rate * 
-                                                      self.error_matrix[j]))
-                                  for j, weight in enumerate(neuron.weights)]
-
+                                                      self.error_matrix[i]))
+                                          for j, weight in
+                                          enumerate(neuron["neuron"].weights)]
+            print(self.neurons[1]["neuron"].weights)
         else:
-            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i])
-                                 * np.dot(layer_ahead.error_matrix,
-                                 layer_ahead.neurons[i].weight)
-                                 for i, neuron in enumerate(self.neurons)]
 
-            for neuron in self.neurons:
-                neuron.weights = [weight + np.multipy(self.mr_input, 
-                                                      (self.l_rate * 
-                                                      self.error_matrix[j]))
-                                  for j, weight in enumerate(neuron.weights)]
+            for i, neuron in enumerate(self.neurons):
+                temp_err = 0
+                for j, la_neuron in enumerate(layer_ahead.neurons):
+                    temp_err += layer_ahead.neurons[j]["neuron"].weights[i] *\
+                                layer_ahead.error_matrix[j]
+                self.error_matrix.append(self.mr_output[i] *
+                                         (1 - self.mr_output[i]) * temp_err)
+
+
+
+            for i, neuron in enumerate(self.neurons):
+                neuron["neuron"].weights = [weight + (self.mr_input[j] *
+                                                      (self.l_rate *
+                                                      self.error_matrix[i]))
+                                            for j, weight in
+                                            enumerate(neuron["neuron"].weights)]
+
+        if math.isnan(self.error_matrix[0]):
+            print("help, please")
+        else:
+            return True
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -96,9 +121,11 @@ class Layer():
         """
         output = []
         self.mr_input = vector
+        v_with_bias = np.append(vector, 1)
         for neur_inst in self.neurons:
-            output.append(neur_inst["neuron"].fires[vector][1])
+            output.append(neur_inst["neuron"].fires(v_with_bias)[1])
         self.mr_output = output[:]
+        print(output)
         return output
 
 

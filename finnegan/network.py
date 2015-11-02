@@ -7,6 +7,7 @@ Recurrent Neural Networks via extensive visualizations.
 """
 # import sys
 # import ipdb
+import csv
 import numpy as np
 from sklearn import datasets, utils
 
@@ -164,8 +165,8 @@ class Network:
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
-                z = self._softmax(y)
-                self._backprop(z, target_vector)
+                # z = self._softmax(y)
+                self._backprop(y, target_vector)
         
         # Add in test loop
         # Add in report guesses
@@ -224,7 +225,7 @@ class Network:
 
 
 def visualization(vector, vector_name):
-    y = np.reshape(vector, (8,8))
+    y = np.reshape(vector, (28,28))
     plt.imshow(y, cmap=cm.Greys_r)
     plt.suptitle(vector_name)
     plt.axis('off')
@@ -246,7 +247,7 @@ if __name__ == '__main__':
 
     # For Kaggle submission
 
-        with open('train.csv', 'r') as f:
+    with open('train.csv', 'r') as f:
         reader = csv.reader(f)
         t = list(reader)
         train = [[int(x) for x in y] for y in t[1:]]
@@ -265,13 +266,13 @@ if __name__ == '__main__':
 
 
     # temp_digits = datasets.load_digits()
-    digits = utils.resample(train_set, random_state=0)
-    temp_answers = utils.resample(ans_train, random_state=0)
+    # digits = utils.resample(train_set, random_state=0)
+    # temp_answers = utils.resample(ans_train, random_state=0)
 
     target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    num_of_training_vectors = 29400
-    answers, answers_to_test, validation_answers = temp_answers, temp_answers[num_of_training_vectors:num_of_training_vectors+6300], temp_answers[num_of_training_vectors+6300:]
-    training_set, testing_set, validation_set = digits, test_set, digits[num_of_training_vectors+6300:]
+    # num_of_training_vectors = 29400
+    # answers, answers_to_test, validation_answers = temp_answers, temp_answers[num_of_training_vectors:num_of_training_vectors+6300], temp_answers[num_of_training_vectors+6300:]
+    # training_set, testing_set, validation_set = digits, test_set, digits[num_of_training_vectors+6300:]
     # epoch = 75
     # network = Network(target_values, training_set, answers, epoch, testing_set,
     #                   answers_to_test, validation_set, validation_answers)
@@ -283,14 +284,14 @@ if __name__ == '__main__':
 # look at round where last backprop runs.  Maybe peel off one iteration?
 # Get over it and append bias to forward pass, but not backward pass 
     ###########
-    # visualization(training_set[10], answers[10])
-    # visualization(training_set[11], answers[11])
-    # visualization(training_set[12], answers[12])
-    epochs = 75
+    # visualization(train_set[10], ans_train[10])
+    # visualization(train_set[11], ans_train[11])
+    # visualization(train_set[12], ans_train[12])
+    epochs = 1
     layers = 1
     neuron_count = [10]
-    network = Network(layers, neuron_count, training_set[0])
-    network.train(training_set, answers, epochs)
+    network = Network(layers, neuron_count, train_set[0])
+    network.train(train_set, ans_train, epochs)
     
     guess_list = network.run_unseen(test_set)
     with open('digits.txt', 'w') as d:

@@ -50,7 +50,7 @@ class Layer():
         self.error_matrix = []
         self.mr_input = []
         self.mr_output = []
-        self.l_rate = .05
+        self.l_rate = .5
 
     def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level
@@ -111,9 +111,9 @@ class Layer():
         """
         output = []
         self.mr_input = vector
-        v_with_bias = np.append(vector, 1)
+        # v_with_bias = np.append(vector, 1)
         for neur_inst in self.neurons:
-            output.append(neur_inst["neuron"].fires(v_with_bias)[1])
+            output.append(neur_inst["neuron"].fires(vector)[1])
         self.mr_output = output[:]
         return output
 

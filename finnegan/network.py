@@ -165,7 +165,6 @@ class Network:
                 target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
-                # print(z, target)
                 self._backprop(z, target_vector)
         
         # Add in test loop
@@ -202,7 +201,7 @@ if __name__ == '__main__':
     # visualization(training_set[10], answers[10])
     # visualization(training_set[11], answers[11])
     # visualization(training_set[12], answers[12])
-    epochs = 20
+    epochs = 2
     layers = 1
     neuron_count = [10]
     network = Network(layers, neuron_count, training_set[0])

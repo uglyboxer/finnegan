@@ -43,7 +43,7 @@ class Neuron:
     def __init__(self, vector_size):
 
         self.threshold = .5
-        self.weights = (np.random.random(vector_size).flatten())
+        self.weights = (np.random.random(vector_size).flatten()-.5)/4
         # self.weights = np.zeros(vector_size).flatten()
 
     def _sigmoid(self, z):
@@ -116,9 +116,10 @@ class Neuron:
             The dot product of the vector and weights
         """
 
-        w_with_bias = np.append(self.weights, 1)
-        dp = np.dot(vector, w_with_bias)
-        if self._sigmoid(dp) > self.threshold:
-            return True, dp
+        # w_with_bias = np.append(self.weights, 1)
+        dp = np.dot(vector, self.weights)
+        sig = expit(dp)
+        if sig > self.threshold:
+            return True, sig
         else:
-            return False, dp
+            return False, sig

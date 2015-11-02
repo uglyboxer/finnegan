@@ -50,7 +50,7 @@ class Layer():
         self.error_matrix = []
         self.mr_input = []
         self.mr_output = []
-        self.l_rate = .05
+        self.l_rate = .5
 
     def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level
@@ -71,16 +71,12 @@ class Layer():
             self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
                                  (target_vector[i] - self.mr_output[i])
                                  for i, neuron in enumerate(self.neurons)]
-            print(self.mr_output, "output")
-            print(self.error_matrix)
-            print(target_vector)
             for i, neuron in enumerate(self.neurons):
                 neuron["neuron"].weights = [weight + (self.mr_input[j]* 
                                                       (self.l_rate * 
                                                       self.error_matrix[i]))
                                           for j, weight in
                                           enumerate(neuron["neuron"].weights)]
-            print(self.neurons[1]["neuron"].weights)
         else:
 
             for i, neuron in enumerate(self.neurons):
@@ -91,19 +87,13 @@ class Layer():
                 self.error_matrix.append(self.mr_output[i] *
                                          (1 - self.mr_output[i]) * temp_err)
 
-
-
             for i, neuron in enumerate(self.neurons):
                 neuron["neuron"].weights = [weight + (self.mr_input[j] *
                                                       (self.l_rate *
                                                       self.error_matrix[i]))
                                             for j, weight in
                                             enumerate(neuron["neuron"].weights)]
-
-        if math.isnan(self.error_matrix[0]):
-            print("help, please")
-        else:
-            return True
+        return True
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -121,11 +111,10 @@ class Layer():
         """
         output = []
         self.mr_input = vector
-        v_with_bias = np.append(vector, 1)
+        # v_with_bias = np.append(vector, 1)
         for neur_inst in self.neurons:
-            output.append(neur_inst["neuron"].fires(v_with_bias)[1])
+            output.append(neur_inst["neuron"].fires(vector)[1])
         self.mr_output = output[:]
-        print(output)
         return output
 
 

@@ -92,11 +92,6 @@ class Network:
         array([  4.53978687e-05,   9.99954602e-01])
 
         """
-        # e_calc = np.exp(np.array(w) / t)
-        # print(e_calc)
-        # dist = e_calc / np.sum(e_calc)
-        # print(sum(dist))
-        # return dist
         e_x = np.exp(w - np.max(w))
         out = e_x / e_x.sum()
         return out
@@ -147,6 +142,8 @@ class Network:
                 print("Backprop failed on layer: " + str(i))
         for layer in self.layers:
             layer.error_matrix = []
+            layer.mr_input = []
+            layer.mr_output = []
         return True
 
     def train(self, dataset, answers, epochs):
@@ -167,10 +164,52 @@ class Network:
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
         
-        # Add in test loop
-        # Add in report guesses
+    def run_unseen(self, test_set):
+        """ Makes guesses on the unseen data, and switches over the test
+        answers to validation set if the bool is True
 
-        # Check for better sigmoid function
+        For each vector in the collection, each neuron in turn will either
+        fire or not.  If a vector fires, it is collected as a possible
+        correct guess.  Not firing is collected as well, in case
+        there an no good guesses at all.  The method will choose the
+        vector with the highest dot product, from either the fired list
+        or the dud list.
+
+        Parameters
+        ----------
+        validation : bool
+            Runs a different set of vectors through the guessing
+            process if validation is set to True
+
+        Returns
+        -------
+        list
+            a list of ints (the guesses for each vector)
+        """
+        guess_list = []
+        for idy, vector in enumerate(test_set):
+            temp = self._pass_through_net(vector)
+            guess_list.append(temp.index(max(temp)))
+        return guess_list
+
+    def report_results(self, guess_list, answers):
+        """ Reports results of guesses on unseen set
+
+        Parameters
+        ----------
+        guess_list : list
+        answers : list
+
+        """
+
+
+        successes = 0
+        for idx, item in enumerate(guess_list):
+            if answers[idx] == item:
+                successes += 1
+        print("Successes: {}  Out of total: {}".format(successes,
+              len(guess_list)))
+        print("For a success rate of: ", successes/len(guess_list))
 
 
 def visualization(vector, vector_name):
@@ -182,7 +221,6 @@ def visualization(vector, vector_name):
     plt.show()
 
 if __name__ == '__main__':
-    # layers, neuron_count, dataset, epochs = sys.argv[1:5]
 
     # Imported from linear_neuron
     temp_digits = datasets.load_digits()
@@ -191,8 +229,8 @@ if __name__ == '__main__':
     # images = utils.resample(temp_digits.images, random_state=0)
     target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     num_of_training_vectors = 1250 
-    answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+500], temp_answers[num_of_training_vectors+500:]
-    training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+500], digits[num_of_training_vectors+500:]
+    answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
+    training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+260], digits[num_of_training_vectors+260:]
 
 
 # look at round where last backprop runs.  Maybe peel off one iteration?
@@ -201,8 +239,12 @@ if __name__ == '__main__':
     # visualization(training_set[10], answers[10])
     # visualization(training_set[11], answers[11])
     # visualization(training_set[12], answers[12])
-    epochs = 2
-    layers = 1
-    neuron_count = [10]
+    epochs = 8
+    layers = 2
+    neuron_count = [10, 10]
     network = Network(layers, neuron_count, training_set[0])
     network.train(training_set, answers, epochs)
+    guess_list = network.run_unseen(testing_set)
+    network.report_results(guess_list, answers_to_test)
+    valid_list = network.run_unseen(validation_set)
+    network.report_results(valid_list, validation_answers)

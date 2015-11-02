@@ -43,7 +43,7 @@ class Neuron:
     def __init__(self, vector_size):
 
         self.threshold = .5
-        self.weights = (np.random.random(vector_size).flatten()-.5)/4
+        self.weights = (np.random.random(vector_size).flatten()-.5)/20
         # self.weights = np.zeros(vector_size).flatten()
 
     def _sigmoid(self, z):

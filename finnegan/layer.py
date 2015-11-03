@@ -71,12 +71,7 @@ class Layer():
             self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
                                  (self.mr_output[i] - target_vector[i])
                                  for i, neuron in enumerate(self.neurons)]
-            for i, neuron in enumerate(self.neurons):
-                neuron["neuron"].weights = [weight - (self.mr_input[j]* 
-                                                      (self.l_rate * 
-                                                      self.error_matrix[i]))
-                                          for j, weight in
-                                          enumerate(neuron["neuron"].weights)]
+
         else:
 
             for i, neuron in enumerate(self.neurons):
@@ -86,14 +81,18 @@ class Layer():
                                 layer_ahead.error_matrix[j]
                 self.error_matrix.append(self.mr_output[i] *
                                          (1 - self.mr_output[i]) * temp_err)
-
-            for i, neuron in enumerate(self.neurons):
-                neuron["neuron"].weights = [weight - (self.mr_input[j] *
-                                                      (self.l_rate *
-                                                      self.error_matrix[i]))
-                                            for j, weight in
-                                            enumerate(neuron["neuron"].weights)]
         return True
+
+    def _update_weights(self):
+        """ Update the weights of each neuron based on the backprop
+        calculation """
+
+        for i, neuron in enumerate(self.neurons):
+            neuron["neuron"].weights = [weight - (self.mr_input[j] *
+                                                  (self.l_rate *
+                                                  self.error_matrix[i]))
+                                        for j, weight in
+                                        enumerate(neuron["neuron"].weights)]
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer

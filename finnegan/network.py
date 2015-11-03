@@ -140,11 +140,19 @@ class Network:
                 continue
             else:
                 print("Backprop failed on layer: " + str(i))
+        
+        return True
+
+    def _weights_adjust(self):
+        """ Pass through each layer and make the weight corrections
+        Then clear the states of layers """
+
+        for layer in self.layers:
+            layer._update_weights()
         for layer in self.layers:
             layer.error_matrix = []
             layer.mr_input = []
             layer.mr_output = []
-        return True
 
     def train(self, dataset, answers, epochs):
         """ Runs the training dataset through the network a given number of
@@ -161,8 +169,9 @@ class Network:
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
-                z = self._softmax(y)
-                self._backprop(z, target_vector)
+                # z = self._softmax(y)
+                self._backprop(y, target_vector)
+                self._weights_adjust()
         
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
@@ -224,8 +233,8 @@ if __name__ == '__main__':
 
     # Imported from linear_neuron
     temp_digits = datasets.load_digits()
-    digits = utils.resample(temp_digits.data, random_state=0)
-    temp_answers = utils.resample(temp_digits.target, random_state=0)
+    digits = utils.resample(temp_digits.data, random_state=3)
+    temp_answers = utils.resample(temp_digits.target, random_state=3)
     # images = utils.resample(temp_digits.images, random_state=0)
     target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     num_of_training_vectors = 1250 
@@ -239,9 +248,9 @@ if __name__ == '__main__':
     # visualization(training_set[10], answers[10])
     # visualization(training_set[11], answers[11])
     # visualization(training_set[12], answers[12])
-    epochs = 8
+    epochs = 30
     layers = 2
-    neuron_count = [10, 10]
+    neuron_count = [15, 10]
     network = Network(layers, neuron_count, training_set[0])
     network.train(training_set, answers, epochs)
     guess_list = network.run_unseen(testing_set)

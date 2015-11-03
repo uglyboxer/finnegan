@@ -39,6 +39,9 @@ class Layer():
         A constant determining the the learning rate of the network
         Bigger learns faster - risks creating oscilations
         Smaller is slower - risks settling in local minimums
+    norm : float
+        A constant determining the weight decay of the error function.
+        Prevents overfitting of the training set.
 
     """
 
@@ -51,6 +54,7 @@ class Layer():
         self.mr_input = []
         self.mr_output = []
         self.l_rate = .05
+        self.norm = .01
 
     def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level

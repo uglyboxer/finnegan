@@ -58,8 +58,8 @@ class Network:
         """
         x = 0
         while True:
-            # ipdb.set_trace(vector[0])
-            vector = self.layers[x]._vector_pass(vector)
+            # Append bias to input vector
+            vector = self.layers[x]._vector_pass(np.append(vector, 1))
             x += 1
             if x >= len(self.layers):
                 return vector
@@ -248,9 +248,9 @@ if __name__ == '__main__':
     # visualization(training_set[10], answers[10])
     # visualization(training_set[11], answers[11])
     # visualization(training_set[12], answers[12])
-    epochs = 30
-    layers = 2
-    neuron_count = [15, 10]
+    epochs = 100
+    layers = 3
+    neuron_count = [14, 64, 10]
     network = Network(layers, neuron_count, training_set[0])
     network.train(training_set, answers, epochs)
     guess_list = network.run_unseen(testing_set)

@@ -47,14 +47,14 @@ class Layer():
 
     def __init__(self, num_neurons, incoming_tot):
         self.num_neurons = num_neurons
-        self.neurons = [{"neuron": Neuron(incoming_tot),
+        self.neurons = [{"neuron": Neuron(incoming_tot + 1),
                          "forward": set(),
                          "backward": set()} for x in range(num_neurons)]
         self.error_matrix = []
         self.mr_input = []
         self.mr_output = []
         self.l_rate = .05
-        self.norm = .01
+        self.norm = .001
 
     def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level
@@ -94,7 +94,9 @@ class Layer():
         for i, neuron in enumerate(self.neurons):
             neuron["neuron"].weights = [weight - (self.mr_input[j] *
                                                   (self.l_rate *
-                                                  self.error_matrix[i]))
+                                                  self.error_matrix[i])) -
+                                                 (self.l_rate * self.norm *
+                                                  weight)
                                         for j, weight in
                                         enumerate(neuron["neuron"].weights)]
 
@@ -118,9 +120,3 @@ class Layer():
             output.append(neur_inst["neuron"].fires(vector)[1])
         self.mr_output = output[:]
         return output
-
-
-
-
-
-

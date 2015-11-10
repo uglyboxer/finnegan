@@ -15,8 +15,8 @@ from layer import Layer
 
 from time import sleep
 
-from matplotlib import cm
-from matplotlib import pyplot as plt
+#from matplotlib import cm
+#from matplotlib import pyplot as plt
 
 
 class Network:

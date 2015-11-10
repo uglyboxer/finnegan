@@ -119,8 +119,6 @@ class Neuron:
         # w_with_bias = np.append(self.weights, 1)
         dp = np.dot(vector, self.weights)
         sig = expit(dp)
-        if sig > .5 and sig != 1.0:
-            print("sig is ", sig)
         if sig > self.threshold:
             return True, sig
         else:

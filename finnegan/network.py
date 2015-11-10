@@ -165,15 +165,14 @@ class Network:
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
-                # z = self._softmax(y)
-                self._backprop(y, target_vector)
-        
+                z = self._softmax(y)
+                self._backprop(z, target_vector)
+     
         # Add in test loop
         # Add in report guesses
 
         # Check for better sigmoid function
 
-    
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
         answers to validation set if the bool is True

@@ -15,8 +15,8 @@ from layer import Layer
 
 from time import sleep
 
-#from matplotlib import cm
-#from matplotlib import pyplot as plt
+from matplotlib import cm
+from matplotlib import pyplot as plt
 
 
 class Network:
@@ -167,7 +167,7 @@ class Network:
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
-     
+        
         # Add in test loop
         # Add in report guesses
 

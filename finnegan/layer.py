@@ -76,6 +76,12 @@ class Layer():
                                  (self.mr_output[i] - target_vector[i])
                                  for i, neuron in enumerate(self.neurons)]
 
+            for i, neuron in enumerate(self.neurons):
+                neuron["neuron"].weights = [weight + (self.mr_input[j]* 
+                                                      (self.l_rate * 
+                                                      self.error_matrix[i]))
+                                          for j, weight in
+                                          enumerate(neuron["neuron"].weights)]
         else:
 
             for i, neuron in enumerate(self.neurons):
@@ -87,16 +93,19 @@ class Layer():
                                          (1 - self.mr_output[i]) * temp_err)
         return True
 
+
     def _update_weights(self):
         """ Update the weights of each neuron based on the backprop
         calculation """
 
         for i, neuron in enumerate(self.neurons):
-            neuron["neuron"].weights = [weight - (self.mr_input[j] *
+            neuron["neuron"].weights = [weight + (self.mr_input[j] *
                                                   (self.l_rate *
                                                   self.error_matrix[i]))
                                         for j, weight in
                                         enumerate(neuron["neuron"].weights)]
+        return True
+
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -114,6 +123,7 @@ class Layer():
         """
         output = []
         self.mr_input = vector
+        # v_with_bias = np.append(vector, 1)
         for neur_inst in self.neurons:
             output.append(neur_inst["neuron"].fires(vector)[1])
         self.mr_output = output[:]

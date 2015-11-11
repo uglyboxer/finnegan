@@ -5,14 +5,9 @@ An extinsible neural net designed to explore Convolutional Neural Networks and
 Recurrent Neural Networks via extensive visualizations.
 
 """
-# import sys
-# import ipdb
 import numpy as np
-from sklearn import datasets, utils
 
 from layer import Layer
-
-from time import sleep
 
 from matplotlib import cm
 from matplotlib import pyplot as plt
@@ -36,7 +31,6 @@ class Network:
     def __init__(self, layers, neuron_count, vector):
         self.num_layers = layers
         self.neuron_count = neuron_count
-        # self.dataset = dataset
         self.possible = [x for x in range(10)]
         self.layers = [Layer(self.neuron_count[x], self.neuron_count[x-1]) if
                        x > 0 else Layer(self.neuron_count[x], len(vector))
@@ -58,7 +52,6 @@ class Network:
         """
         x = 0
         while True:
-            # ipdb.set_trace(vector[0])
             vector = self.layers[x]._vector_pass(vector)
             x += 1
             if x >= len(self.layers):
@@ -133,14 +126,12 @@ class Network:
                 layer_ahead = None
             else:
                 hidden = True
-                # -1 because layers was reversed for index
                 layer_ahead = backwards_layer_list[i-1]
 
             if layer._layer_level_backprop(guess_vector, layer_ahead, target_vector, hidden):
                 continue
             else:
-                print("Backprop failed on layer: " + str(i))
-        
+                print("Backprop failed on layer: " + str(i)) 
         return True
 
     def _weights_adjust(self):
@@ -169,8 +160,8 @@ class Network:
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
                 y = self._pass_through_net(vector)
-                # z = self._softmax(y)
-                self._backprop(y, target_vector)
+                z = self._softmax(y)
+                self._backprop(z, target_vector)
                 self._weights_adjust()
         
     def run_unseen(self, test_set):
@@ -207,11 +198,8 @@ class Network:
         Parameters
         ----------
         guess_list : list
-        answers : list
 
         """
-
-
         successes = 0
         for idx, item in enumerate(guess_list):
             if answers[idx] == item:
@@ -220,40 +208,14 @@ class Network:
               len(guess_list)))
         print("For a success rate of: ", successes/len(guess_list))
 
-
-def visualization(vector, vector_name):
-    y = np.reshape(vector, (8,8))
-    plt.imshow(y, cmap=cm.Greys_r)
-    plt.suptitle(vector_name)
-    plt.axis('off')
-    plt.pause(0.0001)
-    plt.show()
+    def visualization(self, vector, vector_name):
+        y = np.reshape(vector, (28, 28))
+        plt.imshow(y, cmap=cm.Greys_r)
+        plt.suptitle(vector_name)
+        plt.axis('off')
+        plt.pause(0.0001)
+        plt.show()
 
 if __name__ == '__main__':
+    print("Please use net_launch.py")
 
-    # Imported from linear_neuron
-    temp_digits = datasets.load_digits()
-    digits = utils.resample(temp_digits.data, random_state=3)
-    temp_answers = utils.resample(temp_digits.target, random_state=3)
-    # images = utils.resample(temp_digits.images, random_state=0)
-    target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    num_of_training_vectors = 1250 
-    answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
-    training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+260], digits[num_of_training_vectors+260:]
-
-
-# look at round where last backprop runs.  Maybe peel off one iteration?
-# Get over it and append bias to forward pass, but not backward pass 
-    ###########
-    # visualization(training_set[10], answers[10])
-    # visualization(training_set[11], answers[11])
-    # visualization(training_set[12], answers[12])
-    epochs = 30
-    layers = 2
-    neuron_count = [15, 10]
-    network = Network(layers, neuron_count, training_set[0])
-    network.train(training_set, answers, epochs)
-    guess_list = network.run_unseen(testing_set)
-    network.report_results(guess_list, answers_to_test)
-    valid_list = network.run_unseen(validation_set)
-    network.report_results(valid_list, validation_answers)

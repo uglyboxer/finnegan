@@ -86,12 +86,16 @@ class Layer():
 
 
     def _update_weights(self):
+        """ Update the weights of each neuron based on the backprop
+        calculation """
+
         for i, neuron in enumerate(self.neurons):
             neuron["neuron"].weights = [weight + (self.mr_input[j] *
                                                   (self.l_rate *
                                                   self.error_matrix[i]))
                                         for j, weight in
-                                        enumerate(neuron["neuron"].weights)] 
+                                        enumerate(neuron["neuron"].weights)]
+        return True 
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer

@@ -207,13 +207,13 @@ class Network:
         print("For a success rate of: ", successes/len(guess_list))
 
 
-def visualization(vector, vector_name):
-    y = np.reshape(vector, (28, 28))
-    plt.imshow(y, cmap=cm.Greys_r)
-    plt.suptitle(vector_name)
-    plt.axis('off')
-    plt.pause(0.0001)
-    plt.show()
+    def visualization(self, vector, vector_name):
+        y = np.reshape(vector, (28, 28))
+        plt.imshow(y, cmap=cm.Greys_r)
+        plt.suptitle(vector_name)
+        plt.axis('off')
+        plt.pause(0.0001)
+        plt.show()
 
 if __name__ == '__main__':
     print("Please use net_launch.py")

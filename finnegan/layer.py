@@ -5,8 +5,6 @@ A layer constructor class designed for use in the Finnegan Network model
 """
 import numpy as np
 
-# import ipdb
-
 from neuron import Neuron
 
 
@@ -70,7 +68,7 @@ class Layer():
             self.mr_output = output
             x = self.mr_output
             temp_matrix = np.multiply(x, (1 - x))
-            self.error_matrix = np.multiply(temp_matrix, (target_vector - x))
+            self.error_matrix = np.multiply(temp_matrix, (x-target_vector))
 
         else:
 
@@ -90,7 +88,7 @@ class Layer():
         calculation """
 
         for i, neuron in enumerate(self.neurons):
-            neuron["neuron"].weights = [weight + (self.mr_input[j] *
+            neuron["neuron"].weights = [weight - (self.mr_input[j] *
                                                   (self.l_rate *
                                                   self.error_matrix[i]))
                                         for j, weight in

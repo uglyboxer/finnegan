@@ -41,7 +41,6 @@ def run_scikit_digits(epochs, layers, neuron_count):
     digits = utils.resample(temp_digits.data, random_state=3)
     temp_answers = utils.resample(temp_digits.target, random_state=3)
     # images = utils.resample(temp_digits.images, random_state=0)
-    target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     num_of_training_vectors = 1250 
     answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
     training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+260], digits[num_of_training_vectors+260:]
@@ -95,8 +94,6 @@ def run_mnist(epochs, layers, neuron_count):
     ans_train.pop(0)
     train_set.pop(0)
 
-    target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
     network = Network(layers, neuron_count, train_set[0])
     network.train(train_set, ans_train, epochs)
 
@@ -106,9 +103,9 @@ def run_mnist(epochs, layers, neuron_count):
             d.write(str(elem)+'\n')
 
 if __name__ == '__main__':
-    epochs = 25
-    layers = 1
-    layer_list = [10]
+    epochs = 16
+    layers = 2
+    layer_list = [10, 10]
     run_scikit_digits(epochs, layers, layer_list)
     # run_mnist(epochs, layers, layer_list)
 

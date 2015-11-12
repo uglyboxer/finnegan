@@ -14,9 +14,7 @@ Usage
 
 """
 
-from math import e
 import numpy as np
-from operator import add
 from scipy.special import expit
 
 
@@ -46,59 +44,6 @@ class Neuron:
         self.weights = (np.random.random(vector_size).flatten()-.5)/4
         # self.weights = np.zeros(vector_size).flatten()
 
-    def _sigmoid(self, z):
-        """ Calculates the output of a logistic function
-
-        Parameters
-        ----------
-        z : float
-            The dot product of a sample vector (1-d array) and an associated
-            weights set (1-d array), which arrives as a scalar
-
-        Returns
-        -------
-        float
-            It will return something between 0 and 1 inclusive
-        """
-
-        if -700 < z < 700:
-            return 1 / (1 + e ** (-z))
-        elif z < -700:
-            return 0
-        else:
-            return 1
-
-    def update_weights(self, error, vector):
-        """ Updates the weights stored in the receptors
-
-        Parameters
-        ----------
-        error : int
-            The distance from the expected value of a particular training
-            case
-        vector : list
-            A sample vector
-
-        Attributes
-        ----------
-        l_rate : float
-            A number between 0 and 1, it will modify the error to control
-            how much each weight is adjusted. Higher numbers will
-            train faster (but risk unresolvable oscillations), lower
-            numbers will train slower but be more stable.
-
-        Returns
-        -------
-        True
-            As evidence of execution
-
-        """
-
-        l_rate = .05
-        correction = l_rate * error
-        corr_matrix = np.multiply(vector, correction)
-        self.weights = np.fromiter(map(add, self.weights, corr_matrix), np.float)
-        return True
 
     def fires(self, vector):
         """ Takes an input vector and decides if neuron fires or not

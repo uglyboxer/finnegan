@@ -136,7 +136,10 @@ class Network:
                 continue
             else:
                 print("Backprop failed on layer: " + str(i))
+
         for layer in self.layers:
+            layer._update_weights()
+        for layer in self.layers:        
             layer.error_matrix = []
         return True
 

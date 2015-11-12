@@ -4,7 +4,7 @@ A layer constructor class designed for use in the Finnegan Network model
 
 """
 import numpy as np
-import math
+
 # import ipdb
 
 from neuron import Neuron
@@ -50,7 +50,7 @@ class Layer():
         self.error_matrix = []
         self.mr_input = []
         self.mr_output = []
-        self.l_rate = .5
+        self.l_rate = .05
 
     def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
         """ Calculates the error at this level
@@ -68,15 +68,10 @@ class Layer():
         """
         if not hidden:
             self.mr_output = output
-            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
-                                 (target_vector[i] - self.mr_output[i])
-                                 for i, neuron in enumerate(self.neurons)]
-            for i, neuron in enumerate(self.neurons):
-                neuron["neuron"].weights = [weight + (self.mr_input[j]* 
-                                                      (self.l_rate * 
-                                                      self.error_matrix[i]))
-                                          for j, weight in
-                                          enumerate(neuron["neuron"].weights)]
+            x = self.mr_output
+            temp_matrix = np.multiply(x, (1 - x))
+            self.error_matrix = np.multiply(temp_matrix, (target_vector - x))
+
         else:
 
             for i, neuron in enumerate(self.neurons):
@@ -87,13 +82,16 @@ class Layer():
                 self.error_matrix.append(self.mr_output[i] *
                                          (1 - self.mr_output[i]) * temp_err)
 
-            for i, neuron in enumerate(self.neurons):
-                neuron["neuron"].weights = [weight + (self.mr_input[j] *
-                                                      (self.l_rate *
-                                                      self.error_matrix[i]))
-                                            for j, weight in
-                                            enumerate(neuron["neuron"].weights)]
         return True
+
+
+    def _update_weights(self):
+        for i, neuron in enumerate(self.neurons):
+            neuron["neuron"].weights = [weight + (self.mr_input[j] *
+                                                  (self.l_rate *
+                                                  self.error_matrix[i]))
+                                        for j, weight in
+                                        enumerate(neuron["neuron"].weights)] 
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -111,14 +109,8 @@ class Layer():
         """
         output = []
         self.mr_input = vector
-        # v_with_bias = np.append(vector, 1)
         for neur_inst in self.neurons:
             output.append(neur_inst["neuron"].fires(vector)[1])
         self.mr_output = output[:]
         return output
-
-
-
-
-
 

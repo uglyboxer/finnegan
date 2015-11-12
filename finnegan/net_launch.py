@@ -103,7 +103,7 @@ def run_mnist(epochs, layers, neuron_count):
             d.write(str(elem)+'\n')
 
 if __name__ == '__main__':
-    epochs = 16
+    epochs = 12
     layers = 2
     layer_list = [10, 10]
     run_scikit_digits(epochs, layers, layer_list)

@@ -5,9 +5,9 @@ An extinsible neural net designed to explore Convolutional Neural Networks and
 Recurrent Neural Networks via extensive visualizations.
 
 """
-import csv
 import numpy as np
-from sklearn import datasets, utils
+from sklearn.preprocessing import normalize
+
 
 from layer import Layer
 
@@ -54,12 +54,10 @@ class Network:
             Output of the last layer in the chain
 
         """
-        x = 0
-        while True:
+        for x, _ in enumerate(self.layers):
             vector = self.layers[x]._vector_pass(vector)
-            x += 1
-            if x >= len(self.layers):
-                return vector
+        return vector
+            
 
     def _softmax(self, w, t=1.0):
         """Author: Jeremy M. Stober, edits by Martin Thoma
@@ -139,8 +137,8 @@ class Network:
 
         for layer in self.layers:
             layer._update_weights()
-        for layer in self.layers:        
-            layer.error_matrix = []
+        # for layer in self.layers:        
+        #     layer.error_matrix = []
         return True
 
     def train(self, dataset, answers, epochs):
@@ -160,6 +158,12 @@ class Network:
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
+                # print(z)
+                # print(target_vector, 'ans')
+            # print(self.layers[self.num_layers-1].neurons[1]["neuron"].weights)
+            # print(self.layers[self.num_layers-1].error_mag)
+            # print(self.layers[self.num_layers-1].mr_output)
+            # print(answers[-1])
 
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
@@ -185,7 +189,7 @@ class Network:
         """
         guess_list = []
         for idy, vector in enumerate(test_set):
-            temp = self._pass_through_net(vector)
+            temp = self._pass_through_net(normalize(vector, copy=False)[0])
             guess_list.append(temp.index(max(temp)))
         return guess_list
 

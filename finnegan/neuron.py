@@ -41,7 +41,8 @@ class Neuron:
     def __init__(self, vector_size):
 
         self.threshold = .5
-        self.weights = np.random.normal(0, .125, vector_size).flatten()
+        self.weights = np.random.normal(0, (vector_size**(-.5)/2), vector_size).flatten()
+        self.weights[-1] = 1
         # self.weights = np.zeros(vector_size).flatten()
 
 
@@ -61,9 +62,10 @@ class Neuron:
             The dot product of the vector and weights
         """
 
-        w_with_bias = np.append(self.weights, 1)
-        v_with_bias = np.append(vector, 1)
-        dp = np.dot(v_with_bias, w_with_bias)
+        # w_with_bias = np.append(self.weights, 1)
+        # v_with_bias = np.append(vector, 1)
+        # self.weights = np.array(self.weights)
+        dp = np.dot(vector, self.weights)
         sig = expit(dp)
         if sig > self.threshold:
             return True, sig

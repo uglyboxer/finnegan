@@ -57,7 +57,6 @@ class Network:
         for x, _ in enumerate(self.layers):
             vector = self.layers[x]._vector_pass(vector)
         return vector
-            
 
     def _softmax(self, w, t=1.0):
         """Author: Jeremy M. Stober, edits by Martin Thoma
@@ -129,12 +128,10 @@ class Network:
             else:
                 hidden = True
                 layer_ahead = backwards_layer_list[i-1]
-
             if layer._layer_level_backprop(guess_vector, layer_ahead, target_vector, hidden):
                 continue
             else:
                 print("Backprop failed on layer: " + str(i))
-
         for layer in self.layers:
             layer._update_weights()
         # for layer in self.layers:        
@@ -158,12 +155,7 @@ class Network:
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
-                # print(z)
-                # print(target_vector, 'ans')
-            # print(self.layers[self.num_layers-1].neurons[1]["neuron"].weights)
-            # print(self.layers[self.num_layers-1].error_mag)
-            # print(self.layers[self.num_layers-1].mr_output)
-            # print(answers[-1])
+            print(np.mean(np.abs(self.layers[self.num_layers-1].error)))
 
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
@@ -190,7 +182,7 @@ class Network:
         guess_list = []
         for idy, vector in enumerate(test_set):
             temp = self._pass_through_net(normalize(vector, copy=False)[0])
-            guess_list.append(temp.index(max(temp)))
+            guess_list.append(temp.argmax())
         return guess_list
 
     def report_results(self, guess_list, answers):

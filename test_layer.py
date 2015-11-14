@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 
-from finnegan.layer_replace import Layer
+from finnegan.layer import Layer
 
 
 class TestClass(unittest.TestCase):

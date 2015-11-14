@@ -86,10 +86,11 @@ class Layer():
             neg_vector = np.multiply(-1, vector)
             return np.multiply(vector, (np.add(1, neg_vector)))
 
+        y = act_derivative(mr_output)
         if not hidden:
             self.mr_output = output
             x = self.mr_output
-            self.error_matrix = np.multiply(act_derivative(x), (x-target_vector))
+            self.error_matrix = np.multiply(y, (x-target_vector))
             self.error_mag = np.dot(self.error_matrix, self.error_matrix)
         else:
             self.error_matrix = []
@@ -97,7 +98,7 @@ class Layer():
                 temp_err = 0
                 for j, la_neuron in enumerate(layer_ahead.neurons):
                     temp_err += layer_ahead.neurons[j]["neuron"].weights[i]*layer_ahead.error_matrix[j]
-                self.error_matrix.append(temp_err * act_derivative(self.mr_output)[i])
+                self.error_matrix.append(temp_err * y[i])
         return True
 
 # 1-x**2 * x-target * la_weights * mr_output

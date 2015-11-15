@@ -181,7 +181,8 @@ class Network:
         """
         guess_list = []
         for idy, vector in enumerate(test_set):
-            temp = self._pass_through_net(normalize(vector, copy=False)[0])
+            # temp = self._pass_through_net(normalize(vector, copy=False)[0])
+            temp = self._pass_through_net(vector)
             guess_list.append(temp.argmax())
         return guess_list
 

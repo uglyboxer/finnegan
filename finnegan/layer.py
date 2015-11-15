@@ -1,12 +1,13 @@
-""" 
+"""
 Author: Cole Howard
 """
 
 import numpy as np
 from scipy.special import expit
 
+
 class Layer:
-    """ A matrix representation of the neurons in a layer 
+    """ A matrix representation of the neurons in a layer
     Inspired by: I Am Trask
                  http://iamtrask.github.io/2015/07/12/basic-python-network/
 
@@ -25,11 +26,12 @@ class Layer:
     def __init__(self, num_neurons, vector_size):
         self.num_neurons = num_neurons
         np.random.seed(1)
-        self.weights = np.random.normal(0, (vector_size**(-.5)/2), (vector_size, num_neurons))
+        self.weights = np.random.normal(0, (vector_size**(-.5)/2),
+                                        (vector_size, num_neurons))
         self.mr_output = []
         self.mr_input = []
         self.deltas = np.array((vector_size, 1))
-        self.l_rate = .2
+        self.l_rate = .3
 
     def _vector_pass(self, vector):
         """ Takes the vector through the neurons of the layer
@@ -65,7 +67,8 @@ class Layer:
         """
         return vector * (1 - vector)
 
-    def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
+    def _layer_level_backprop(self, output, layer_ahead, target_vector,
+                              hidden=True):
         """ Calculates the error at this level
 
         Parameters
@@ -83,7 +86,8 @@ class Layer:
             self.error = target_vector - self.mr_output
             self.deltas = self.error * self._act_derivative(self.mr_output)
         else:
-            self.deltas = layer_ahead.deltas.dot(layer_ahead.weights.T) * (self._act_derivative(self.mr_output))
+            self.deltas = layer_ahead.deltas.dot(layer_ahead.weights.T) *\
+                          (self._act_derivative(self.mr_output))
         return True
 
     def _update_weights(self):

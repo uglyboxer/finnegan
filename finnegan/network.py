@@ -162,7 +162,7 @@ class Network:
                 self._backprop(z, target_vector)
             amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
             print(amt_off)
-            if amt_off < .000001:
+            if amt_off < .0000001:
                 break
 
     def run_unseen(self, test_set):

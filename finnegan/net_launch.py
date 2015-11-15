@@ -8,8 +8,8 @@ import csv
 import numpy as np
 from sklearn import datasets, utils
 
-from matplotlib import cm
-from matplotlib import pyplot as plt
+# from matplotlib import cm
+# from matplotlib import pyplot as plt
 
 from network import Network
 

@@ -152,10 +152,16 @@ class Network:
         for x in range(epochs):
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
+                vector = np.array(vector)
+                vector = vector.astype(float)
+                vector = normalize(vector, copy=False)[0]
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
-            print(np.mean(np.abs(self.layers[self.num_layers-1].error)))
+            amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
+            print(amt_off)
+            if amt_off < .01:
+                break
 
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
@@ -180,9 +186,11 @@ class Network:
             a list of ints (the guesses for each vector)
         """
         guess_list = []
-        for idy, vector in enumerate(test_set):
-            # temp = self._pass_through_net(normalize(vector, copy=False)[0])
-            temp = self._pass_through_net(vector)
+        for vector in test_set:
+            vector = np.array(vector)
+            vector = vector.astype(float)
+            temp = self._pass_through_net(normalize(vector, copy=False)[0])
+            # temp = self._pass_through_net(vector)
             guess_list.append(temp.argmax())
         return guess_list
 
@@ -199,6 +207,7 @@ class Network:
         for idx, item in enumerate(guess_list):
             if answers[idx] == item:
                 successes += 1
+        print(guess_list)
         print("Successes: {}  Out of total: {}".format(successes,
               len(guess_list)))
         print("For a success rate of: ", successes/len(guess_list))

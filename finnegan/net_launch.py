@@ -94,8 +94,17 @@ def run_mnist(epochs, layers, neuron_count):
     ans_train.pop(0)
     train_set.pop(0)
 
+    train_set = utils.resample(train_set, random_state=2)
+    ans_train = utils.resample(ans_train, random_state=2)
+
     network = Network(layers, neuron_count, train_set[0])
     network.train(train_set, ans_train, epochs)
+
+    # For validation purposes
+    # guess_list = network.run_unseen(train_set[4000:4500])
+    # network.report_results(guess_list, ans_train[4000:4500])
+    # guess_list = network.run_unseen(train_set[4500:5000])
+    # network.report_results(guess_list, ans_train[4500:5000])
 
     guess_list = network.run_unseen(test_set)
     with open('digits.txt', 'w') as d:
@@ -103,9 +112,9 @@ def run_mnist(epochs, layers, neuron_count):
             d.write(str(elem)+'\n')
 
 if __name__ == '__main__':
-    epochs = 30
+    epochs = 200
     layers = 3
-    layer_list = [100, 24, 10]
+    layer_list = [100, 64, 10]
     # run_scikit_digits(epochs, layers, layer_list)
     run_mnist(epochs, layers, layer_list)
 

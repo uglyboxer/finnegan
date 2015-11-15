@@ -16,6 +16,8 @@ from time import sleep
 # from matplotlib import cm
 # from matplotlib import pyplot as plt
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 class Network:
     """ A multi layer neural net with backpropogation.
@@ -152,7 +154,7 @@ class Network:
         for x in range(epochs):
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
-                vector = np.array(vector)
+                vector = np.array(vector).reshape(1, -1)
                 vector = vector.astype(float)
                 vector = normalize(vector, copy=False)[0]
                 y = self._pass_through_net(vector)
@@ -160,7 +162,7 @@ class Network:
                 self._backprop(z, target_vector)
             amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
             print(amt_off)
-            if amt_off < .01:
+            if amt_off < .0005:
                 break
 
     def run_unseen(self, test_set):
@@ -187,7 +189,7 @@ class Network:
         """
         guess_list = []
         for vector in test_set:
-            vector = np.array(vector)
+            vector = np.array(vector).reshape(1, -1)
             vector = vector.astype(float)
             temp = self._pass_through_net(normalize(vector, copy=False)[0])
             # temp = self._pass_through_net(vector)

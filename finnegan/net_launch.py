@@ -38,8 +38,8 @@ def run_scikit_digits(epochs, layers, neuron_count):
 
     # Imported from linear_neuron
     temp_digits = datasets.load_digits()
-    digits = utils.resample(temp_digits.data, random_state=2)
-    temp_answers = utils.resample(temp_digits.target, random_state=2)
+    digits = utils.resample(temp_digits.data, random_state=3)
+    temp_answers = utils.resample(temp_digits.target, random_state=3)
     # images = utils.resample(temp_digits.images, random_state=0)
     num_of_training_vectors = 1250 
     answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
@@ -112,9 +112,9 @@ def run_mnist(epochs, layers, neuron_count):
             d.write(str(elem)+'\n')
 
 if __name__ == '__main__':
-    epochs = 200
+    epochs = 150
     layers = 3
-    layer_list = [100, 64, 10]
-    # run_scikit_digits(epochs, layers, layer_list)
-    run_mnist(epochs, layers, layer_list)
+    layer_list = [12, 28, 10]
+    run_scikit_digits(epochs, layers, layer_list)
+    # run_mnist(epochs, layers, layer_list)
 

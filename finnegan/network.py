@@ -16,8 +16,8 @@ from time import sleep
 # from matplotlib import cm
 # from matplotlib import pyplot as plt
 
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+# import warnings
+# warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 class Network:
     """ A multi layer neural net with backpropogation.
@@ -162,7 +162,7 @@ class Network:
                 self._backprop(z, target_vector)
             amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
             print(amt_off)
-            if amt_off < .0005:
+            if amt_off < .000001:
                 break
 
     def run_unseen(self, test_set):

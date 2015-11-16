@@ -8,8 +8,8 @@ import csv
 import numpy as np
 from sklearn import datasets, utils
 
-from matplotlib import cm
-from matplotlib import pyplot as plt
+# from matplotlib import cm
+# from matplotlib import pyplot as plt
 
 from network import Network
 
@@ -41,7 +41,6 @@ def run_scikit_digits(epochs, layers, neuron_count):
     digits = utils.resample(temp_digits.data, random_state=3)
     temp_answers = utils.resample(temp_digits.target, random_state=3)
     # images = utils.resample(temp_digits.images, random_state=0)
-    target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     num_of_training_vectors = 1250 
     answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
     training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+260], digits[num_of_training_vectors+260:]
@@ -95,10 +94,17 @@ def run_mnist(epochs, layers, neuron_count):
     ans_train.pop(0)
     train_set.pop(0)
 
-    target_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    train_set = utils.resample(train_set, random_state=2)
+    ans_train = utils.resample(ans_train, random_state=2)
 
     network = Network(layers, neuron_count, train_set[0])
     network.train(train_set, ans_train, epochs)
+
+    # For validation purposes
+    # guess_list = network.run_unseen(train_set[4000:4500])
+    # network.report_results(guess_list, ans_train[4000:4500])
+    # guess_list = network.run_unseen(train_set[4500:5000])
+    # network.report_results(guess_list, ans_train[4500:5000])
 
     guess_list = network.run_unseen(test_set)
     with open('digits.txt', 'w') as d:
@@ -106,9 +112,9 @@ def run_mnist(epochs, layers, neuron_count):
             d.write(str(elem)+'\n')
 
 if __name__ == '__main__':
-    epochs = 15
-    layers = 1
-    layer_list = [10]
+    epochs = 150
+    layers = 3
+    layer_list = [64, 24, 10]
     run_scikit_digits(epochs, layers, layer_list)
     # run_mnist(epochs, layers, layer_list)
 

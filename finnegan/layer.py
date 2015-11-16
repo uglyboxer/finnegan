@@ -1,62 +1,81 @@
-""" Author: Cole Howard
-
-A layer constructor class designed for use in the Finnegan Network model
-
 """
+Author: Cole Howard
+"""
+
 import numpy as np
-import math
-# import ipdb
-
-from neuron import Neuron
+from scipy.special import expit
 
 
-class Layer():
-    """  This is a model for each layer (hidden or visible) of a neural net.
+class Layer:
+    """ A matrix representation of the neurons in a layer
+    Inspired by: I Am Trask
+                 http://iamtrask.github.io/2015/07/12/basic-python-network/
 
     Parameters
     ----------
     num_neurons : int
         The number of instances of the class Neuron in each layer.
-    incoming_tot : int
+    vector_size : int
         The number of inputs from the previous layer/original input.  Also,
         equivalent to the length of incoming input vector.
 
     Attributes
     ----------
-    neurons : list
-        A list of dictionaries of:
-            ("neuron": instance of Neuron obj,
-             "forward": list of forward connections (strings),
-             "backward": list of backward connections (strings))
-    error_matrix : list
-        The collection of floats that represent the error per neuron in the
-        layer.
-    mr_input : list
-        The most recent input vector to pass through #haxor alert
-    mr_output : list
-        An ordered list of the most recent output of the layer
-    l_rate : float
-        A constant determining the the learning rate of the network
-        Bigger learns faster - risks creating oscilations
-        Smaller is slower - risks settling in local minimums
-    norm : float
-        A constant determining the weight decay of the error function.
-        Prevents overfitting of the training set.
-
     """
 
-    def __init__(self, num_neurons, incoming_tot):
+    def __init__(self, num_neurons, vector_size):
         self.num_neurons = num_neurons
-        self.neurons = [{"neuron": Neuron(incoming_tot),
-                         "forward": set(),
-                         "backward": set()} for x in range(num_neurons)]
-        self.error_matrix = []
-        self.mr_input = []
+        np.random.seed(1)
+        self.weights = np.random.normal(0, (vector_size**(-.5)/2),
+                                        (vector_size, num_neurons))
         self.mr_output = []
-        self.l_rate = .05
-        self.norm = .01
+        self.mr_input = []
+        self.deltas = np.array((vector_size, 1))
+        self.l_rate = .35
+        self.reg_rate = .0001
 
-    def _layer_level_backprop(self, output, layer_ahead, target_vector, hidden=True):
+    def _vector_pass(self, vector, do_dropout=True):
+        """ Takes the vector through the neurons of the layer
+
+        Parameters
+        ----------
+        vector : numpy array
+            The input array to the layer
+
+        Returns
+        -------
+        numpy array
+            The ouput of the layer
+
+        """
+        dropout_percent = 0.1
+        self.mr_input = vector
+        temp_weights = np.copy(self.weights)
+        if do_dropout:
+            temp_weights *= np.random.binomial([
+                            np.ones(np.shape(self.weights))],
+                            1-dropout_percent)[0] * (1.0/(1-dropout_percent))
+        x = np.dot(temp_weights.T, vector)
+        self.mr_output = expit(x)
+        return self.mr_output
+
+    def _act_derivative(self, vector):
+        """ Calculate the derivative of the activation function
+
+        Parameters
+        ----------
+        vector : numpy array
+            A vector representing the most recent output of a given layer
+
+        Returns
+        -------
+        numpy array
+
+        """
+        return vector * (1 - vector)
+
+    def _layer_level_backprop(self, output, layer_ahead, target_vector,
+                              hidden=True):
         """ Calculates the error at this level
 
         Parameters
@@ -71,66 +90,16 @@ class Layer():
 
         """
         if not hidden:
-            self.mr_output = output
-            self.error_matrix = [self.mr_output[i] * (1 - self.mr_output[i]) *
-                                 (self.mr_output[i] - target_vector[i])
-                                 for i, neuron in enumerate(self.neurons)]
-
-            for i, neuron in enumerate(self.neurons):
-                neuron["neuron"].weights = [weight + (self.mr_input[j]* 
-                                                      (self.l_rate * 
-                                                      self.error_matrix[i]))
-                                          for j, weight in
-                                          enumerate(neuron["neuron"].weights)]
+            self.error = target_vector - self.mr_output
+            self.deltas = self.error * self._act_derivative(self.mr_output)
         else:
-
-            for i, neuron in enumerate(self.neurons):
-                temp_err = 0
-                for j, la_neuron in enumerate(layer_ahead.neurons):
-                    temp_err += layer_ahead.neurons[j]["neuron"].weights[i] *\
-                                layer_ahead.error_matrix[j]
-                self.error_matrix.append(self.mr_output[i] *
-                                         (1 - self.mr_output[i]) * temp_err)
+            self.deltas = layer_ahead.deltas.dot(layer_ahead.weights.T) *\
+                          (self._act_derivative(self.mr_output))
         return True
-
 
     def _update_weights(self):
         """ Update the weights of each neuron based on the backprop
         calculation """
 
-        for i, neuron in enumerate(self.neurons):
-            neuron["neuron"].weights = [weight + (self.mr_input[j] *
-                                                  (self.l_rate *
-                                                  self.error_matrix[i]))
-                                        for j, weight in
-                                        enumerate(neuron["neuron"].weights)]
-        return True
-
-
-    def _vector_pass(self, vector):
-        """ Takes the vector through the neurons of the layer
-
-        Parameters
-        ----------
-        vector : numpy array
-            The input array to the layer
-
-        Returns
-        -------
-        numpy array
-            The ouput of the layer
-
-        """
-        output = []
-        self.mr_input = vector
-        # v_with_bias = np.append(vector, 1)
-        for neur_inst in self.neurons:
-            output.append(neur_inst["neuron"].fires(vector)[1])
-        self.mr_output = output[:]
-        return output
-
-
-
-
-
-
+        self.weights += (np.outer(self.mr_input, self.deltas) * self.l_rate)
+        return

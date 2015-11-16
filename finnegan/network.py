@@ -6,12 +6,18 @@ Recurrent Neural Networks via extensive visualizations.
 
 """
 import numpy as np
+from sklearn.preprocessing import normalize
+
 
 from layer import Layer
 
-from matplotlib import cm
-from matplotlib import pyplot as plt
+from time import sleep
 
+# from matplotlib import cm
+# from matplotlib import pyplot as plt
+
+# import warnings
+# warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 class Network:
     """ A multi layer neural net with backpropogation.
@@ -36,7 +42,7 @@ class Network:
                        x > 0 else Layer(self.neuron_count[x], len(vector))
                        for x in range(self.num_layers)]
 
-    def _pass_through_net(self, vector):
+    def _pass_through_net(self, vector, dropout=True):
         """ Sends a vector into the net
 
         Parameters
@@ -50,12 +56,9 @@ class Network:
             Output of the last layer in the chain
 
         """
-        x = 0
-        while True:
-            vector = self.layers[x]._vector_pass(vector)
-            x += 1
-            if x >= len(self.layers):
-                return vector
+        for x, _ in enumerate(self.layers):
+            vector = self.layers[x]._vector_pass(vector, dropout)
+        return vector
 
     def _softmax(self, w, t=1.0):
         """Author: Jeremy M. Stober, edits by Martin Thoma
@@ -127,7 +130,6 @@ class Network:
             else:
                 hidden = True
                 layer_ahead = backwards_layer_list[i-1]
-
             if layer._layer_level_backprop(guess_vector, layer_ahead, target_vector, hidden):
                 continue
             else:
@@ -141,9 +143,10 @@ class Network:
         for layer in self.layers:
             layer._update_weights()
         for layer in self.layers:
-            layer.error_matrix = []
-            layer.mr_input = []
-            layer.mr_output = []
+            layer._update_weights()
+        # for layer in self.layers:        
+        #     layer.error_matrix = []
+        return True
 
     def train(self, dataset, answers, epochs):
         """ Runs the training dataset through the network a given number of
@@ -159,11 +162,17 @@ class Network:
         for x in range(epochs):
             for vector, target in zip(dataset, answers):
                 target_vector = [0 if x != target else 1 for x in self.possible]
+                vector = np.array(vector).reshape(1, -1)
+                vector = vector.astype(float)
+                vector = normalize(vector, copy=False)[0]
                 y = self._pass_through_net(vector)
                 z = self._softmax(y)
                 self._backprop(z, target_vector)
-                self._weights_adjust()
-        
+            amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
+            print(amt_off)
+            if amt_off < .00000001:
+                break
+
     def run_unseen(self, test_set):
         """ Makes guesses on the unseen data, and switches over the test
         answers to validation set if the bool is True
@@ -187,9 +196,12 @@ class Network:
             a list of ints (the guesses for each vector)
         """
         guess_list = []
-        for idy, vector in enumerate(test_set):
-            temp = self._pass_through_net(vector)
-            guess_list.append(temp.index(max(temp)))
+        for vector in test_set:
+            vector = np.array(vector).reshape(1, -1)
+            vector = vector.astype(float)
+            temp = self._pass_through_net(normalize(vector, copy=False)[0],
+                                          dropout=False)
+            guess_list.append(temp.argmax())
         return guess_list
 
     def report_results(self, guess_list, answers):
@@ -204,9 +216,11 @@ class Network:
         for idx, item in enumerate(guess_list):
             if answers[idx] == item:
                 successes += 1
+        print(guess_list)
         print("Successes: {}  Out of total: {}".format(successes,
               len(guess_list)))
         print("For a success rate of: ", successes/len(guess_list))
+
 
     def visualization(self, vector, vector_name):
         y = np.reshape(vector, (28, 28))

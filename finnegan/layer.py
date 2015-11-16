@@ -32,8 +32,9 @@ class Layer:
         self.mr_input = []
         self.deltas = np.array((vector_size, 1))
         self.l_rate = .35
+        self.reg_rate = .0001
 
-    def _vector_pass(self, vector):
+    def _vector_pass(self, vector, do_dropout=True):
         """ Takes the vector through the neurons of the layer
 
         Parameters
@@ -47,11 +48,13 @@ class Layer:
             The ouput of the layer
 
         """
-        dropout_percent, do_dropout = (0.05, True)
+        dropout_percent = 0.1
         self.mr_input = vector
         temp_weights = np.copy(self.weights)
         if do_dropout:
-            temp_weights *= np.random.binomial([np.ones(np.shape(self.weights))], 1-dropout_percent)[0] * (1.0/(1-dropout_percent))
+            temp_weights *= np.random.binomial([
+                            np.ones(np.shape(self.weights))],
+                            1-dropout_percent)[0] * (1.0/(1-dropout_percent))
         x = np.dot(temp_weights.T, vector)
         self.mr_output = expit(x)
         return self.mr_output

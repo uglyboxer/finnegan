@@ -42,7 +42,7 @@ class Network:
                        x > 0 else Layer(self.neuron_count[x], len(vector))
                        for x in range(self.num_layers)]
 
-    def _pass_through_net(self, vector):
+    def _pass_through_net(self, vector, dropout=True):
         """ Sends a vector into the net
 
         Parameters
@@ -57,7 +57,7 @@ class Network:
 
         """
         for x, _ in enumerate(self.layers):
-            vector = self.layers[x]._vector_pass(vector)
+            vector = self.layers[x]._vector_pass(vector, dropout)
         return vector
 
     def _softmax(self, w, t=1.0):
@@ -162,7 +162,7 @@ class Network:
                 self._backprop(z, target_vector)
             amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
             print(amt_off)
-            if amt_off < .0000001:
+            if amt_off < .00000001:
                 break
 
     def run_unseen(self, test_set):
@@ -191,8 +191,7 @@ class Network:
         for vector in test_set:
             vector = np.array(vector).reshape(1, -1)
             vector = vector.astype(float)
-            temp = self._pass_through_net(normalize(vector, copy=False)[0])
-            # temp = self._pass_through_net(vector)
+            temp = self._pass_through_net(normalize(vector, copy=False)[0], False)
             guess_list.append(temp.argmax())
         return guess_list
 

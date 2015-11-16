@@ -115,6 +115,6 @@ if __name__ == '__main__':
     epochs = 250
     layers = 3
     layer_list = [32, 48, 10]
-    run_scikit_digits(epochs, layers, layer_list)
-    # run_mnist(epochs, layers, layer_list)
+    # run_scikit_digits(epochs, layers, layer_list)
+    run_mnist(epochs, layers, layer_list)
 

@@ -191,7 +191,8 @@ class Network:
         for vector in test_set:
             vector = np.array(vector).reshape(1, -1)
             vector = vector.astype(float)
-            temp = self._pass_through_net(normalize(vector, copy=False)[0], False)
+            temp = self._pass_through_net(normalize(vector, copy=False)[0],
+                                          dropout=False)
             guess_list.append(temp.argmax())
         return guess_list
 

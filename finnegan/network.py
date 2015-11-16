@@ -133,15 +133,7 @@ class Network:
             if layer._layer_level_backprop(guess_vector, layer_ahead, target_vector, hidden):
                 continue
             else:
-                print("Backprop failed on layer: " + str(i)) 
-        return True
-
-    def _weights_adjust(self):
-        """ Pass through each layer and make the weight corrections
-        Then clear the states of layers """
-
-        for layer in self.layers:
-            layer._update_weights()
+                print("Backprop failed on layer: " + str(i))
         for layer in self.layers:
             layer._update_weights()
         # for layer in self.layers:        
@@ -212,6 +204,7 @@ class Network:
         guess_list : list
 
         """
+
         successes = 0
         for idx, item in enumerate(guess_list):
             if answers[idx] == item:
@@ -232,4 +225,3 @@ class Network:
 
 if __name__ == '__main__':
     print("Please use net_launch.py")
-

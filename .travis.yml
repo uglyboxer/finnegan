@@ -2,6 +2,21 @@ language: python
 python:
  - "3.5"
 
+addons:
+  apt:
+    packages:
+      - libatlas-dev
+      - libatlas-base-dev
+      - liblapack-dev
+      - gfortran
+      - libgmp-dev
+      - libmpfr-dev
+      - ccache
+      - libfreetype6-dev
+      - libpng-dev
+      - zlib1g-dev
+      - texlive-fonts-recommended
+
 install: pip install -r requirements.txt
 
 # uncomment this line if your project needs to run something other than `rake`:

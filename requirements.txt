@@ -2,7 +2,7 @@ appnope==0.1.0
 backports.ssl-match-hostname==3.4.0.2
 certifi==2015.9.6.2
 decorator==4.0.4
--e git+https://github.com/uglyboxer/finnegan.git@7e3fd6fc47bfbfeef19f7cbf6e0dce7f38e0cfb6#egg=finnegan-origin_vectorize
+-e git+https://github.com/uglyboxer/finnegan.git@d813b6beaaa3e792221dce4db4dfe3b081c7f40d#egg=finnegan-master
 functools32==3.2.3.post2
 gnureadline==6.3.3
 ipykernel==4.1.1

@@ -2,7 +2,6 @@ appnope==0.1.0
 backports.ssl-match-hostname==3.4.0.2
 certifi==2015.9.6.2
 decorator==4.0.4
-functools32==3.2.3.post2
 gnureadline==6.3.3
 ipykernel==4.1.1
 ipython==4.0.0

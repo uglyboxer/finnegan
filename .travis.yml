@@ -2,11 +2,6 @@ language: python
 python:
  - "3.5"
 
-before_install:
-  - apt-get install libblas-dev
-  - apt-get install liblapack-dev
-  - apt-get install gfortran
-
 install: pip install --uglyboxer -r requirements.txt
 
 # uncomment this line if your project needs to run something other than `rake`:

@@ -6,6 +6,8 @@ An extensible custom neural net with a serious nod to [I Am Trask](http://iamtra
 Documentation, Test Coverage, and Travis
 TBA
 
+[![Coverage Status](https://coveralls.io/repos/uglyboxer/finnegan/badge.svg?branch=master&service=github)](https://coveralls.io/github/uglyboxer/finnegan?branch=master)
+
 ## To Get Started
 
 Copy the contents of finnegan (the main repo) and from inside that folder run the command:

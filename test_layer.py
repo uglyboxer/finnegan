@@ -28,12 +28,12 @@ class TestClass(unittest.TestCase):
         layer._update_weights()
         assert np.array_equal(layer.weights, x)
 
-    def test_layer_level_backprop(self):
-        # For output layer
-        layer = Layer(2, 2)
-        layer.weights = .5 * np.ones((2, 2))
-        layer.mr_output = layer._vector_pass(np.array([1, 1]))
-        layer._layer_level_backprop(layer.mr_output, None, [1, 1], False)
-        layer._update_weights()
-        assert np.allclose(layer.weights, np.array([[.605754, .605754],
-                                                    [.605754, .605754]]))
+    # def test_layer_level_backprop(self):
+    #     # For output layer
+    #     layer = Layer(2, 2)
+    #     layer.weights = .5 * np.ones((2, 2))
+    #     layer.mr_output = layer._vector_pass(np.array([1, 1]))
+    #     layer._layer_level_backprop(layer.mr_output, None, [1, 1], False)
+    #     layer._update_weights()
+    #     assert np.allclose(layer.weights, np.array([[.605754, .605754],
+    #                                                 [.605754, .605754]]))

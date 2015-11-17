@@ -8,16 +8,14 @@ Recurrent Neural Networks via extensive visualizations.
 import numpy as np
 from sklearn.preprocessing import normalize
 
-
 from layer import Layer
-
-from time import sleep
 
 # from matplotlib import cm
 # from matplotlib import pyplot as plt
 
 # import warnings
-# warnings.filterwarnings("ignore", category=DeprecationWarning) 
+# warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 class Network:
     """ A multi layer neural net with backpropogation.
@@ -31,6 +29,11 @@ class Network:
         hidden layer.  (Size of input/output layers are dictated by dataset)
     vector : list
         Example vector to get size of initial input
+
+    Attributes
+    ----------
+    possible : list
+        A list of possible output values
 
     """
 
@@ -49,6 +52,9 @@ class Network:
         ----------
         vector : numpy array
             A numpy array representing a training input (without the target)
+        dropout : bool
+            Whether or not you should perform random dropout in the pass through
+            the net.  (Set False for the tesing set vectors)
 
         Returns
         -------
@@ -147,8 +153,13 @@ class Network:
         Parameters
         ----------
         dataset : Numpy nested array
-        The collection of training data (vectors and the associated target
+            The collection of training data (vectors and the associated target
             value)
+        answers : numpy array
+            The array of correct answers to associate with each training
+            vector
+        epochs : int
+            Number of times to run the training set through the net
 
         """
         for x in range(epochs):
@@ -178,9 +189,8 @@ class Network:
 
         Parameters
         ----------
-        validation : bool
-            Runs a different set of vectors through the guessing
-            process if validation is set to True
+        test_set : list
+            List of numpy arrays representing the unseen vectors
 
         Returns
         -------
@@ -202,6 +212,7 @@ class Network:
         Parameters
         ----------
         guess_list : list
+        answers : list
 
         """
 

@@ -21,6 +21,22 @@ class Layer:
 
     Attributes
     ----------
+    weights : numpy array
+        A matrix reprsentation of the weight space.  Each column represents a
+        neurnon in the layer.
+        Each entry in those columns is the value of a weight in that neuron.
+    mr_output : numpy array
+        Output of the layer
+    mr_input : numpy array
+        Input vector from the layer below (or original input)
+    deltas : numpy array
+        Calculated change in the weightspace for the backprop
+    l_rate : float
+        The learning rate for the update weight method
+    reg_rate : float
+        The factor by which the weights are adjusted for regularization to
+        prevent overfitting.
+
     """
 
     def __init__(self, num_neurons, vector_size):
@@ -41,6 +57,9 @@ class Layer:
         ----------
         vector : numpy array
             The input array to the layer
+        do_dropout : bool
+            Whether or not weight dropout should happen as the vector passes
+            through the layer
 
         Returns
         -------
@@ -80,6 +99,11 @@ class Layer:
 
         Parameters
         ----------
+        layer_ahead : object
+            The instance of Layer that this layer's output is connected to
+        target_vector : numpy array
+            A representation of the expected output of the net for the original
+            vector input on this particular pass
         hidden : bool
             Whether or not the current layer is hidden (default: True)
 

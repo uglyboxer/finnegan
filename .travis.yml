@@ -3,12 +3,11 @@ python:
  - "3.5"
 
 before_install:
-  - sudo apt-get install libblas-dev
-  - sudo apt-get install liblapack-dev
-  - sudo apt-get install gfortran
-  - pip install scipy
-  - pip install numpy
-  - pip install sklearn
+  - apt-get install libblas-dev
+  - apt-get install liblapack-dev
+  - apt-get install gfortran
+
+install: pip install --uglyboxer -r requirements.txt
 
 # uncomment this line if your project needs to run something other than `rake`:
 # script: bundle exec rspec spec

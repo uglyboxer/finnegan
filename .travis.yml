@@ -4,4 +4,4 @@ python:
 
 # uncomment this line if your project needs to run something other than `rake`:
 # script: bundle exec rspec spec
-script: py.test --cov=finnegan
+script: py.test

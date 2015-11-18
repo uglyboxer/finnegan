@@ -113,23 +113,25 @@ def run_mnist(epochs, layers, neuron_count, out_file):
     print('Finished ' + out_file)
 
 if __name__ == '__main__':
-    runs = [(100, 3, [100, 100, 10]),    # digits_0.txt
-            (100, 3, [42, 28, 10]),      # digits_1.txt, etc.
-            (100, 3, [28, 16, 10]),
-            (100, 3, [32, 8, 10]),
-            (100, 3, [14, 26, 10]),
-            (100, 3, [34, 6, 10]),
+    # runs are (epochs, layers, [list of neurons per layer])
+    runs = [(100, 3, [10, 10, 10]),         # digits_5
             (100, 4, [20, 10, 14, 10]),
-            (100, 4, [16, 16, 16, 10]),
+            (100, 4, [16, 16, 16, 10]),     # digits_7
             (100, 5, [12, 10, 12, 10, 10]),
-            (100, 2, [8, 10]),
-            (100, 2, [64, 10])]
+            (100, 2, [8, 10]),              # digits_9
+            (100, 2, [64, 10])]             # digits_10
+
+            # (100, 3, [100, 100, 10]),    # digits_0.txt
+            # (100, 3, [42, 28, 10]),      # digits_1.txt, etc.
+            # (100, 3, [28, 16, 10]),
+            # (100, 3, [32, 8, 10]),
+            # (100, 3, [14, 26, 10]),        # digits_4.txt
 
     # run_scikit_digits(epochs, layers, layer_list)
     for idx, hprun in enumerate(runs):
         epochs = hprun[0]
         layers = hprun[1]
         layer_list = hprun[2]
-        out_file = 'digits_' + str(idx) + '.txt'
+        out_file = 'digits_' + str(idx + 5) + '.txt'
         run_mnist(epochs, layers, layer_list, out_file)
 

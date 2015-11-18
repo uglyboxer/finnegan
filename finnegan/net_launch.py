@@ -113,8 +113,7 @@ def run_mnist(epochs, layers, neuron_count, out_file):
     print('Finished ' + out_file)
 
 if __name__ == '__main__':
-    runs = [(2, 2, [10, 10]),
-            (10, 3, [100, 100, 10]),    # digits_0.txt
+    runs = [(10, 3, [100, 100, 10]),    # digits_0.txt
             (10, 3, [42, 28, 10]),      # digits_1.txt, etc.
             (10, 3, [28, 16, 10]),
             (10, 3, [32, 8, 10]),

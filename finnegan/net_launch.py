@@ -58,7 +58,7 @@ def run_scikit_digits(epochs, layers, neuron_count):
     network.report_results(valid_list, validation_answers)
 
 
-def run_mnist(epochs, layers, neuron_count):
+def run_mnist(epochs, layers, neuron_count, out_file):
     """ Run Mnist dataset and output a guess list on the Kaggle test_set
 
     Parameters
@@ -107,14 +107,30 @@ def run_mnist(epochs, layers, neuron_count):
     # network.report_results(guess_list, ans_train[4500:5000])
 
     guess_list = network.run_unseen(test_set)
-    with open('digits.txt', 'w') as d:
+    with open(out_file, 'w') as d:
         for elem in guess_list:
             d.write(str(elem)+'\n')
+    print('Finished ' + out_file)
 
 if __name__ == '__main__':
-    epochs = 250
-    layers = 3
-    layer_list = [264, 58, 10]
+    runs = [(2, 2, [10, 10]),
+            (10, 3, [100, 100, 10]),    # digits_0.txt
+            (10, 3, [42, 28, 10]),      # digits_1.txt, etc.
+            (10, 3, [28, 16, 10]),
+            (10, 3, [32, 8, 10]),
+            (10, 3, [14, 26, 10]),
+            (10, 3, [34, 6, 10]),
+            (10, 4, [20, 10, 14, 10]),
+            (10, 4, [16, 16, 16, 10]),
+            (10, 5, [12, 10, 12, 10, 10]),
+            (10, 2, [8, 10]),
+            (10, 2, [64, 10])]
+
     # run_scikit_digits(epochs, layers, layer_list)
-    run_mnist(epochs, layers, layer_list)
+    for idx, hprun in enumerate(runs):
+        epochs = hprun[0]
+        layers = hprun[1]
+        layer_list = hprun[2]
+        out_file = 'digits_' + str(idx) + '.txt'
+        run_mnist(epochs, layers, layer_list, out_file)
 

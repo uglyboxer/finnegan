@@ -96,37 +96,25 @@ def run_mnist(epochs, layers, neuron_count, out_file):
 
     train_set = utils.resample(train_set, random_state=2)
     ans_train = utils.resample(ans_train, random_state=2)
-
+    print(len(train_set))
     network = Network(layers, neuron_count, train_set[0])
-    network.train(train_set, ans_train, epochs)
+    network.train(train_set[:42000], ans_train[:42000], epochs)
 
     # For validation purposes
-    # guess_list = network.run_unseen(train_set[4000:4500])
-    # network.report_results(guess_list, ans_train[4000:4500])
-    # guess_list = network.run_unseen(train_set[4500:5000])
-    # network.report_results(guess_list, ans_train[4500:5000])
+    guess_list = network.run_unseen(train_set[42000:51000])
+    network.report_results(guess_list, ans_train[42000:51000], True, (epochs, layers, neuron_count))
+    guess_list = network.run_unseen(train_set[51000:60000])
+    network.report_results(guess_list, ans_train[51000:60000], True)
 
-    guess_list = network.run_unseen(test_set)
-    with open(out_file, 'w') as d:
-        for elem in guess_list:
-            d.write(str(elem)+'\n')
-    print('Finished ' + out_file)
+    # guess_list = network.run_unseen(test_set)
+    # with open(out_file, 'w') as d:
+    #     for elem in guess_list:
+    #         d.write(str(elem)+'\n')
+    # print('Finished ' + out_file)
 
 if __name__ == '__main__':
     # runs are (epochs, layers, [list of neurons per layer])
-    runs = [(100, 2, [8, 10]),              # digits_9
-            (100, 2, [64, 10]),             # digits_10
-            (100, 3, [20, 20, 10])]
-
-            # (100, 3, [100, 100, 10]),    # digits_0.txt
-            # (100, 3, [42, 28, 10]),      # digits_1.txt, etc.
-            # (100, 3, [28, 16, 10]),
-            # (100, 3, [32, 8, 10]),
-            # (100, 3, [14, 26, 10]),        # digits_4.txt
-            # (100, 3, [10, 10, 10]),         # digits_5
-            # (100, 4, [20, 10, 14, 10]),
-            # (100, 4, [16, 16, 16, 10]),     # digits_7
-            # (100, 5, [12, 10, 12, 10, 10]),
+    runs = [(2, 2, [10, 10])]
 
     # run_scikit_digits(epochs, layers, layer_list)
     for idx, hprun in enumerate(runs):

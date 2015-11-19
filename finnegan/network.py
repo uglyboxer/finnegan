@@ -206,33 +206,46 @@ class Network:
             guess_list.append(temp.argmax())
         return guess_list
 
-    def report_results(self, guess_list, answers):
+    def report_results(self, guess_list, answers, rec=False, hpparams=None):
         """ Reports results of guesses on unseen set
 
         Parameters
         ----------
         guess_list : list
         answers : list
+        rec : bool
+          Set to True if output should be written to a text file
 
         """
-
         successes = 0
         for idx, item in enumerate(guess_list):
             if answers[idx] == item:
                 successes += 1
-        print(guess_list)
-        print("Successes: {}  Out of total: {}".format(successes,
-              len(guess_list)))
-        print("For a success rate of: ", successes/len(guess_list))
 
+        if not rec:
+            print(guess_list)
+            print("Successes: {}  Out of total: {}".format(successes,
+                  len(guess_list)))
+            print("For a success rate of: ", successes/len(guess_list))
 
-    def visualization(self, vector, vector_name):
-        y = np.reshape(vector, (28, 28))
-        plt.imshow(y, cmap=cm.Greys_r)
-        plt.suptitle(vector_name)
-        plt.axis('off')
-        plt.pause(0.0001)
-        plt.show()
+        else:
+            d = open('results.txt', 'a+')
+            d.write('Epochs: ' + str(hpparams[0]) + '\n')
+            d.write('Layers: ' + str(hpparams[1]) + '\n')
+            d.write('Neuron Counts: ' + str(hpparams[2]) + '\n')
+            d.write("Successes: {}  Out of total: {}".format(successes,
+                    len(guess_list)))
+            d.write("For a success rate of: ", successes/len(guess_list))
+            d.write("\n")
+            d.close()
+
+    # def visualization(self, vector, vector_name):
+    #     y = np.reshape(vector, (28, 28))
+    #     plt.imshow(y, cmap=cm.Greys_r)
+    #     plt.suptitle(vector_name)
+    #     plt.axis('off')
+    #     plt.pause(0.0001)
+    #     plt.show()
 
 if __name__ == '__main__':
     print("Please use net_launch.py")

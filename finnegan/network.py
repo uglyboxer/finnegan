@@ -32,9 +32,12 @@ class Network:
 
     Attributes
     ----------
+    layers : list
+        A list of Layer instances representing the network 
     possible : list
         A list of possible output values
-
+    early_break : bool
+        Set to True iff the full run of epochs does not run
     """
 
     def __init__(self, layers, neuron_count, vector):
@@ -44,6 +47,7 @@ class Network:
         self.layers = [Layer(self.neuron_count[x], self.neuron_count[x-1]) if
                        x > 0 else Layer(self.neuron_count[x], len(vector))
                        for x in range(self.num_layers)]
+        self.early_break = False
 
     def _pass_through_net(self, vector, dropout=True):
         """ Sends a vector into the net
@@ -174,6 +178,7 @@ class Network:
             amt_off = np.mean(np.abs(self.layers[self.num_layers-1].error))
             print(amt_off)
             if amt_off < .001:
+                self.early_break = True
                 break
 
     def run_unseen(self, test_set):
@@ -235,7 +240,9 @@ class Network:
             d.write('Neuron Counts: ' + str(hpparams[2]) + '\n')
             d.write("Successes: {}  Out of total: {}".format(successes,
                     len(guess_list)) + "\n")
-            d.write("For a success rate of: " + str(successes/len(guess_list)))
+            d.write("For a success rate of: " + str(successes/len(guess_list)) + "\n")
+            if self.early_break:
+                d.write('Finished before full set of epochs completed.')
             d.write("\n")
             d.write("\n")
             d.close()

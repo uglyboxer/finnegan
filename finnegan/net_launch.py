@@ -120,7 +120,7 @@ if __name__ == '__main__':
     
     for x in range(10, 50, 5):
         for y in range(10, x+2):
-            runs = (25, 2, [x, y])
+            runs = (25, 3, [x, y, 10])
             epochs = runs[0]
             layers = runs[1]
             layer_list = runs[2]

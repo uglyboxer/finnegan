@@ -58,7 +58,7 @@ def run_scikit_digits(epochs, layers, neuron_count):
     network.report_results(valid_list, validation_answers)
 
 
-def run_mnist(epochs, layers, neuron_count, out_file):
+def run_mnist(epochs, layers, neuron_count, out_file=None):
     """ Run Mnist dataset and output a guess list on the Kaggle test_set
 
     Parameters
@@ -71,6 +71,8 @@ def run_mnist(epochs, layers, neuron_count, out_file):
     neuron_count : list
         The number of neurons in each of the layers (in order), does not count
         the bias term
+    out_file : str
+        The name of a file to create a Kaggle submission with
 
     Attributes
     ----------
@@ -96,16 +98,17 @@ def run_mnist(epochs, layers, neuron_count, out_file):
 
     train_set = utils.resample(train_set, random_state=2)
     ans_train = utils.resample(ans_train, random_state=2)
-    print(len(train_set))
+
     network = Network(layers, neuron_count, train_set[0])
-    network.train(train_set[:42000], ans_train[:42000], epochs)
+    network.train(train_set[:29400], ans_train[:29400], epochs)
 
     # For validation purposes
-    guess_list = network.run_unseen(train_set[42000:51000])
-    network.report_results(guess_list, ans_train[42000:51000], True, (epochs, layers, neuron_count))
-    guess_list = network.run_unseen(train_set[51000:60000])
-    network.report_results(guess_list, ans_train[51000:60000], True)
-
+    guess_list = network.run_unseen(train_set[29400:35700])
+    network.report_results(guess_list, ans_train[29400:35700], True, (epochs, layers, neuron_count))
+    guess_list = network.run_unseen(train_set[35700:])
+    network.report_results(guess_list, ans_train[35700:], True, (epochs, layers, neuron_count))
+    print(neuron_count)
+    # NEED to modify this to jus output the correct format.
     # guess_list = network.run_unseen(test_set)
     # with open(out_file, 'w') as d:
     #     for elem in guess_list:
@@ -114,13 +117,13 @@ def run_mnist(epochs, layers, neuron_count, out_file):
 
 if __name__ == '__main__':
     # runs are (epochs, layers, [list of neurons per layer])
-    runs = [(2, 2, [10, 10])]
+    
+    for x in range(10, 50):
+        for y in range(10, x+2):
+            runs = (25, 2, [x, y])
+            epochs = runs[0]
+            layers = runs[1]
+            layer_list = runs[2]
+            run_mnist(epochs, layers, layer_list)
 
     # run_scikit_digits(epochs, layers, layer_list)
-    for idx, hprun in enumerate(runs):
-        epochs = hprun[0]
-        layers = hprun[1]
-        layer_list = hprun[2]
-        out_file = 'digits_' + str(idx + 9) + '.txt'
-        run_mnist(epochs, layers, layer_list, out_file)
-

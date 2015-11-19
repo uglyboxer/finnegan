@@ -177,8 +177,7 @@ class Network:
                 break
 
     def run_unseen(self, test_set):
-        """ Makes guesses on the unseen data, and switches over the test
-        answers to validation set if the bool is True
+        """ Makes guesses on the unseen data.
 
         For each vector in the collection, each neuron in turn will either
         fire or not.  If a vector fires, it is collected as a possible
@@ -207,7 +206,8 @@ class Network:
         return guess_list
 
     def report_results(self, guess_list, answers, rec=False, hpparams=None):
-        """ Reports results of guesses on unseen set
+        """ Reports results of guesses on unseen set.  Reports to stdout,
+        unles rec is set to True.  It will then record results to a file.
 
         Parameters
         ----------
@@ -226,7 +226,7 @@ class Network:
             print(guess_list)
             print("Successes: {}  Out of total: {}".format(successes,
                   len(guess_list)))
-            print("For a success rate of: ", successes/len(guess_list))
+            print("For a success rate of: " + str(successes/len(guess_list)))
 
         else:
             d = open('results.txt', 'a+')
@@ -234,8 +234,9 @@ class Network:
             d.write('Layers: ' + str(hpparams[1]) + '\n')
             d.write('Neuron Counts: ' + str(hpparams[2]) + '\n')
             d.write("Successes: {}  Out of total: {}".format(successes,
-                    len(guess_list)))
-            d.write("For a success rate of: ", successes/len(guess_list))
+                    len(guess_list)) + "\n")
+            d.write("For a success rate of: " + str(successes/len(guess_list)))
+            d.write("\n")
             d.write("\n")
             d.close()
 

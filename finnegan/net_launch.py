@@ -45,7 +45,7 @@ def run_scikit_digits(epochs, layers, neuron_count):
     answers, answers_to_test, validation_answers = temp_answers[:num_of_training_vectors], temp_answers[num_of_training_vectors:num_of_training_vectors+260], temp_answers[num_of_training_vectors+260:]
     training_set, testing_set, validation_set = digits[:num_of_training_vectors], digits[num_of_training_vectors:num_of_training_vectors+260], digits[num_of_training_vectors+260:]
 
-    ###########
+    ########### Uncomment to plot image of indexed vector and associated answer
     # network.visualization(training_set[10], answers[10])
     # network.visualization(training_set[11], answers[11])
     # network.visualization(training_set[12], answers[12])

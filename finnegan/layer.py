@@ -47,8 +47,8 @@ class Layer:
         self.mr_output = []
         self.mr_input = []
         self.deltas = np.array((vector_size, 1))
-        self.l_rate = .35
-        self.reg_rate = .0001
+        self.l_rate = .1
+        self.reg_rate = .000001
 
     def _vector_pass(self, vector, do_dropout=True):
         """ Takes the vector through the neurons of the layer
@@ -124,6 +124,7 @@ class Layer:
     def _update_weights(self):
         """ Update the weights of each neuron based on the backprop
         calculation """
-
-        self.weights += (np.outer(self.mr_input, self.deltas) * self.l_rate)
+        temp_weights = np.copy(self.weights)
+        self.weights += (np.outer(self.mr_input, self.deltas) * self.l_rate) -\
+                         self.l_rate * self.reg_rate * np.sum(temp_weights**2)
         return

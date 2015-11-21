@@ -118,12 +118,13 @@ def run_mnist(epochs, layers, neuron_count, out_file=None):
 if __name__ == '__main__':
     # runs are (epochs, layers, [list of neurons per layer])
     
-    for x in range(10, 50, 5):
-        for y in range(10, x+2):
-            runs = (25, 3, [x, y, 10])
-            epochs = runs[0]
-            layers = runs[1]
-            layer_list = runs[2]
-            run_mnist(epochs, layers, layer_list)
+    # for x in range(10, 50, 5):
+    #     for y in range(10, x+2):
+    #         runs = (25, 3, [x, y, 10])
+    #         epochs = runs[0]
+    #         layers = runs[1]
+    #         layer_list = runs[2]
+    #         run_mnist(epochs, layers, layer_list)
 
-    # run_scikit_digits(epochs, layers, layer_list)
+    epochs, layers, layer_list = (225, 3, [15, 10, 10])
+    run_scikit_digits(epochs, layers, layer_list)

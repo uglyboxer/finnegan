@@ -103,7 +103,7 @@ def run_mnist(epochs, layers, neuron_count, out_file=None):
     network.train(train_set[:29400], ans_train[:29400], epochs)
 
     # For validation purposes
-    guess_list = network.run_unseen(train_set[29400:35700])
+    guess_list = network.run_unseen(test_set)
     network.report_results(guess_list, ans_train[29400:35700], True, (epochs, layers, neuron_count))
     guess_list = network.run_unseen(train_set[35700:])
     network.report_results(guess_list, ans_train[35700:], True, (epochs, layers, neuron_count))
@@ -118,13 +118,13 @@ def run_mnist(epochs, layers, neuron_count, out_file=None):
 if __name__ == '__main__':
     # runs are (epochs, layers, [list of neurons per layer])
     
-    # for x in range(10, 50, 5):
-    #     for y in range(10, x+2):
-    #         runs = (25, 3, [x, y, 10])
-    #         epochs = runs[0]
-    #         layers = runs[1]
-    #         layer_list = runs[2]
-    #         run_mnist(epochs, layers, layer_list)
+    for x in range(80, 91):
+        for y in range(x-2, x+2):
+            runs = (300, 3, [x, y, 10])
+            epochs = runs[0]
+            layers = runs[1]
+            layer_list = runs[2]
+            run_mnist(epochs, layers, layer_list)
 
-    epochs, layers, layer_list = (500, 3, [35, 36, 10])
-    run_scikit_digits(epochs, layers, layer_list)
+    # epochs, layers, layer_list = (500, 3, [35, 36, 10])
+    # run_scikit_digits(epochs, layers, layer_list)

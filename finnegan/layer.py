@@ -47,8 +47,8 @@ class Layer:
         self.mr_output = []
         self.mr_input = []
         self.deltas = np.array((vector_size, 1))
-        self.l_rate = .1
-        self.reg_rate = .000001
+        self.l_rate = .75
+        self.reg_rate = .001
 
     def _vector_pass(self, vector, do_dropout=True):
         """ Takes the vector through the neurons of the layer
@@ -126,5 +126,5 @@ class Layer:
         calculation """
         temp_weights = np.copy(self.weights)
         self.weights += (np.outer(self.mr_input, self.deltas) * self.l_rate) -\
-                         self.l_rate * self.reg_rate * np.sum(temp_weights**2)
+                         self.l_rate * self.reg_rate * np.sum(temp_weights)
         return

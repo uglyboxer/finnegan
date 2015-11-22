@@ -103,7 +103,7 @@ def run_mnist(epochs, layers, neuron_count, out_file=None):
     network.train(train_set[:29400], ans_train[:29400], epochs)
 
     # For validation purposes
-    guess_list = network.run_unseen(test_set)
+    guess_list = network.run_unseen(train_set[29400:35700])
     network.report_results(guess_list, ans_train[29400:35700], True, (epochs, layers, neuron_count))
     guess_list = network.run_unseen(train_set[35700:])
     network.report_results(guess_list, ans_train[35700:], True, (epochs, layers, neuron_count))

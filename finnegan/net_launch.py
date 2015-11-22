@@ -99,32 +99,47 @@ def run_mnist(epochs, layers, neuron_count, out_file=None):
     train_set = utils.resample(train_set, random_state=4)
     ans_train = utils.resample(ans_train, random_state=4)
 
-    network = Network(layers, neuron_count, train_set[0])
-    network.train(train_set[:29400], ans_train[:29400], epochs)
+    # network = Network(layers, neuron_count, train_set[0])
+    # network.train(train_set[:29400], ans_train[:29400], epochs)
 
     # For validation purposes
-    guess_list = network.run_unseen(train_set[29400:35700])
-    network.report_results(guess_list, ans_train[29400:35700], True, (epochs, layers, neuron_count))
-    guess_list = network.run_unseen(train_set[35700:])
-    network.report_results(guess_list, ans_train[35700:], True, (epochs, layers, neuron_count))
-    print(neuron_count)
-    # NEED to modify this to jus output the correct format.
-    # guess_list = network.run_unseen(test_set)
-    # with open(out_file, 'w') as d:
-    #     for elem in guess_list:
-    #         d.write(str(elem)+'\n')
-    # print('Finished ' + out_file)
+    # guess_list = network.run_unseen(train_set[29400:35700])
+    # network.report_results(guess_list, ans_train[29400:35700], True, (epochs, layers, neuron_count))
+    # guess_list = network.run_unseen(train_set[35700:])
+    # network.report_results(guess_list, ans_train[35700:], True, (epochs, layers, neuron_count))
+    # print(neuron_count)
+
+    # For Kaggle submissions
+    network = Network(layers, neuron_count, train_set[0])
+    network.train(train_set, ans_train, epochs)
+    guess_list = network.run_unseen(test_set)
+
+    guess_list = network.run_unseen(test_set)
+    with open(out_file, 'w', newline='\n') as d:
+        d.write('"ImageId","Label"')
+        d.write('\n')
+        writer = csv.writer(d)
+        for idx, elem in enumerate(guess_list):
+            row = idx+1, str(elem)
+            writer.writerow(row)
+    print('Finished ' + out_file)
 
 if __name__ == '__main__':
     # runs are (epochs, layers, [list of neurons per layer])
     
-    for x in range(80, 91):
-        for y in range(x-2, x+2):
-            runs = (300, 3, [x, y, 10])
-            epochs = runs[0]
-            layers = runs[1]
-            layer_list = runs[2]
-            run_mnist(epochs, layers, layer_list)
+    # for x in range(80, 91):
+    #     for y in range(x-2, x+2):
+    #         runs = (300, 3, [x, y, 10])
+    #         epochs = runs[0]
+    #         layers = runs[1]
+    #         layer_list = runs[2]
+            # run_mnist(epochs, layers, layer_list)
+    run_mnist(300, 3, [87, 85, 10], 'kaggle_sub1.txt')
+    run_mnist(300, 3, [87, 86, 10], 'kaggle_sub2.txt')
+    run_mnist(300, 3, [86, 85, 10], 'kaggle_sub3.txt')
+    run_mnist(300, 3, [75, 74, 10], 'kaggle_sub4.txt')
+    run_mnist(300, 3, [75, 73, 10], 'kaggle_sub5.txt')
+
 
     # epochs, layers, layer_list = (500, 3, [35, 36, 10])
     # run_scikit_digits(epochs, layers, layer_list)
